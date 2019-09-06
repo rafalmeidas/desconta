@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Painel;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\Painel\CompraFormRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Empresa;
