@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Painel;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\Painel\CompraFormRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Empresa;
@@ -45,7 +44,7 @@ class CompraController extends Controller
         $empresas = Empresa::pluck('razao_social', 'id')->all();
         $data = date('Y-m-d');
         //dd($dataForm);
-
+        //$this->searchCompra($request, $pessoa); //chamada de método, como passar outro Request sem ser o padrão da função?
         //Fazer esta consulta fora do if me daria a possibilidade de ter o 'id' da pessoa para validações, pois o id da pessoa esta em um campo hidden no form
         if (isset($dataForm) && $dataForm['pesquisa'] != null && $dataForm['nome'] === null) {
             $pessoas = $pessoa->search($dataForm, $this->totalPageSearch);
@@ -127,12 +126,22 @@ class CompraController extends Controller
 
     public function searchCompra(Request $request, Pessoa $pessoa)
     {
-        $dataForm = $request->except('_token');
-        //dd($dataForm);
-
+        $titulo = 'Cadastro de Compra';
         $empresas = Empresa::pluck('razao_social', 'id')->all();
-        
-
-        return view('painel.compra.create-edit', compact('pessoas', 'empresas', 'dataForm'));
+        $data = date('Y-m-d');
+        $dataForm = $request->except('_token');
+        if (isset($dataForm) && $dataForm['pesquisa'] != null && $dataForm['nome'] === null) {
+            $pessoas = $pessoa->search($dataForm, $this->totalPageSearch);
+            foreach ($pessoas as $pessoa) {
+                $id = $pessoa->id;
+                $nome = $pessoa->nome;
+                $sobrenome = $pessoa->sobrenome;
+            }
+            //dd('estou aqui');
+            return view('painel.compra.create-edit', compact('titulo', 'empresas', 'data', 'id', 'nome', 'sobrenome'));
+        }else {
+            return redirect()->route('compra.create')->with('error', 'Por favor, insira o CPF do cliente');
+        }
+        //dd($dataForm);
     }
 }
