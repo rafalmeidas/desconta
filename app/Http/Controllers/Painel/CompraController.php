@@ -124,7 +124,7 @@ class CompraController extends Controller
         }
     }
 
-    public function searchCompra(Request $request, Pessoa $pessoa)
+    public function searchCliente(Request $request, Pessoa $pessoa)
     {
         $titulo = 'Cadastro de Compra';
         $empresas = Empresa::pluck('razao_social', 'id')->all();
