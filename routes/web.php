@@ -31,7 +31,7 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'pa
 
 //Rotas API
 Route::group(['namespace' => 'Api'], function(){
-    Route::get('get_empresa', 'ApiController@getEmpresa');
+    Route::get('get_compra', 'ApiController@getCompra');
     Route::get('get_estado', 'ApiController@getEstado');
 });
 
