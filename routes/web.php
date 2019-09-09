@@ -29,8 +29,7 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'pa
     Route::resource('pessoa','PessoaController');
     Route::resource('empresa','EmpresaController');
     Route::resource('usuario','UsuarioController');
-    //Route::resource('compra','CompraController');
-    Route::any('compra', 'CompraController@index')->name('compra_index');
+    Route::resource('compra','CompraController');
 });
 
 Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'painel'], function () {

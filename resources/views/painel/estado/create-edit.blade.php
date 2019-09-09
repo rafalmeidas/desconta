@@ -1,10 +1,6 @@
 @extends('adminlte::page')
 @include('includes.includes')
 
-@section('title', 'Cadastrar Estado')
-
-
-
 @if(isset($estado))
 @section('title', 'Editar Estado')
 @else
