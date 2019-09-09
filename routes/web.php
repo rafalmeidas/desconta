@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
+
 Route::group(['middleware' => ['auth'], 'namespace' => 'Admin', 'prefix' => 'admin'], function () {
 
     Route::any('historic-search', 'BalanceController@searchHistoric')->name('historic.search');
@@ -26,7 +29,14 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'pa
     Route::resource('pessoa','PessoaController');
     Route::resource('empresa','EmpresaController');
     Route::resource('usuario','UsuarioController');
-    Route::resource('compra','CompraController');
+    //Route::resource('compra','CompraController');
+    Route::any('compra', 'CompraController@index')->name('compra_index');
+});
+
+Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'painel'], function () {
+    Route::any('compra/index', 'CompraController@index')->name('compra_index');
+    Route::any('compra/create-edit', 'CompraController@index')->name('compra_edit');
+    Route::any('compra/view', 'CompraController@index')->name('compra_view');
 });
 
 //Rotas API
