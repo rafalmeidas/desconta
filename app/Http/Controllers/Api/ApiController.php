@@ -12,9 +12,11 @@ class ApiController extends Controller
     {
     }
     //Empresas
-    public function getEmpresa()
+    public function getCompra()
     {
-        return  DB::select("SELECT * FROM empresas");
+        return  DB::select("SELECT data_venda, valor_total, empresas.nome_fantasia
+                                FROM  compras
+                                INNER JOIN empresas on compras.empresa_id = empresas.id");
     }
 
     public function getEstado()
