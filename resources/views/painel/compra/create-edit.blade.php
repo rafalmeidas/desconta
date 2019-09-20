@@ -45,24 +45,17 @@
         <form class="form" method="post" action="{{route('compra.update', $compra->id)}}">
             {!! method_field('PUT')!!}
             @else
+            <form class="form" method="post" >
+                <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label >XML da nota</label>
+                            <input type="file" name="xml" class="form-control"/>
+                        </div>
+                    </div>
+            </form>
             <form class="" method="post" action="{{route('compra.store')}}">
                 @endif
                 {!! csrf_field() !!}
-                <div class="form-row">
-                    <div class="form-group col-md-6">    
-                        <label for="idpesquisa">Pesquisa</label>   
-                        <input type="text" name="pesquisa" id="idpesquisa" placeholder="Digite o CPF" class="form-control" />
-                    </div>
-                    <div class="form-group col-md-2">    
-                        <label style="opacity: 0;">botao</label><br>   
-                        <input type="submit" class="btn btn-info" value="Pesquisar" />
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label >Nome do cliente</label>
-                        <input type="hidden" name="pessoa_id" class="form-control" @if(isset($id)) value="{{$id}}" @endif/>
-                        <input type="text" name="nome"  placeholder="Nome do cliente" class="form-control" @if(isset($id)) value="{{$nome}} {{$sobrenome}}" @endif readonly/>
-                    </div>
-                </div>
                 <div class="form-row">
                     <div class="form-group col-md-5">
                                 <label for="idempresa">Empresa</label>
