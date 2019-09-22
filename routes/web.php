@@ -32,13 +32,6 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'pa
     Route::resource('compra','CompraController');
 });
 
-Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'painel'], function () {
-    Route::any('compra/index', 'CompraController@index')->name('compra_index');
-    Route::any('compra/create-edit', 'CompraController@index')->name('compra_edit');
-    Route::any('compra/view', 'CompraController@index')->name('compra_view');
-    Route::any('compra/create-edit', 'CompraController@index')->name('compra_xml');
-});
-
 //Rotas API
 Route::group(['namespace' => 'Api'], function(){
     Route::get('get_compra', 'ApiController@getCompra');

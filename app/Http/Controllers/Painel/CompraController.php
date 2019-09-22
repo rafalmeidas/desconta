@@ -40,7 +40,7 @@ class CompraController extends Controller
     public function store(Request $request)
     {
         $titulo = 'Cadastro de Compra';
-        //$dataForm = $request->all();
+        $dataForm = $request->all();
         //$empresas = Empresa::pluck('razao_social', 'id')->all();
         $data = date('Y-m-d');
         //dd($dataForm);
