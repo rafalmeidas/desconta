@@ -13,6 +13,7 @@ class CompraController extends Controller
     private $compra;
     private $totalPage = 10;
     private $totalPageSearch = 1;
+    private $xmlNota;
     
     public function __construct(Compra $compra)
     {
@@ -31,10 +32,11 @@ class CompraController extends Controller
     public function create()
     {
         $titulo = 'Cadastro de Compra';
-        $empresas = Empresa::pluck('razao_social', 'id')->all();
-        $data = date('Y-m-d');
+        //$empresas = Empresa::pluck('razao_social', 'id')->all();
+        //$data = date('Y-m-d');
         
-        return view('painel.compra.create-edit', compact('titulo', 'empresas', 'data'));
+        return view('painel.compra.xml');
+        //return view('painel.compra.xml', compact('titulo', 'empresas', 'data'));
     }
 
     public function store(Request $request)
@@ -110,10 +112,20 @@ class CompraController extends Controller
         }
     }
 
-    public function XML()
+    public function xml(Request $request)
     {
-        $dataForm = $_POST['xml'];
-        $xml = simplexml_load_string($dataForm);
-        return $xml;
+        $dataForm = $request->only('xml');
+        //Não estou conseguindo pegar os dados do arquivo xml
+        $this->xmlNota = simplexml_load_file($dataForm);
+        //dd($this->xmlNota);
+        $titulo = "Compra";
+        $empresas = Empresa::pluck('razao_social', 'id')->all();
+        $data = date('Y-m-d');
+        return view('painel.compra.xml', compact('titulo', 'empresas', 'data'));
+    }
+
+    public function salvarXml()
+    {
+
     }
 }

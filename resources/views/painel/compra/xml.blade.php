@@ -25,7 +25,8 @@
 <div class="box">
     <div class="box-body">
         @include('includes.alerts')
-        <form class="form" method="post" action="{{route('compra.store')}}">
+        <form class="form" method="post" action="{{route('compra.xml')}}" enctype="multipart/form-data">
+            {!! csrf_field() !!}
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <label >XML da nota</label>

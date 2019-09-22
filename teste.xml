@@ -1,0 +1,8 @@
+<pessoa sexo="feminino">
+	<idade>20</idade>
+	<cabelo>preto</cabelo>
+</pessoa>
+<pessoa sexo="masculino">
+	<idade>25</idade>
+	<cabelo>castanho</cabelo>
+</pessoa>

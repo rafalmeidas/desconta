@@ -32,6 +32,11 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'pa
     Route::resource('compra','CompraController');
 });
 
+//Rota de envio do xml
+Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
+    Route::any('painel/compra/create', 'CompraController@xml')->name('compra.xml');
+});
+
 //Rotas API
 Route::group(['namespace' => 'Api'], function(){
     Route::get('get_compra', 'ApiController@getCompra');
