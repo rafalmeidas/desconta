@@ -64,7 +64,7 @@
             </tr>
             @endforeach
         </table>
-        {{ $estados->links()}}
+        {{$estados->links()}}
     </div>
 </div>
 @endsection

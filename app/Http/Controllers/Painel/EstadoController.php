@@ -9,7 +9,7 @@ use App\Http\Requests\Painel\EstadoFormRequest;
 class EstadoController extends Controller {
 
     private $estado;
-    private $totalPage =10;
+    private $totalPage =5;
     
     public function __construct(Estado $estado) {
         $this->estado = $estado;

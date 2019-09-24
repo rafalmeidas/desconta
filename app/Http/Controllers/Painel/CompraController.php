@@ -113,10 +113,12 @@ class CompraController extends Controller
         $dataForm =  $request->only('xml');
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
+
+        $tempThiago = $xml->NFe->infNFe;
+        dd($tempThiago);
         //dd($xml);
-        foreach($xml as $key){
-            echo $key;
-        }
+        echo $xml['NFe'];
+       
     }
 
     public function salvarXml()
