@@ -12,8 +12,6 @@ class CompraController extends Controller
 {
     private $compra;
     private $totalPage = 10;
-    private $totalPageSearch = 1;
-    private $xmlNota;
     
     public function __construct(Compra $compra)
     {
@@ -42,7 +40,6 @@ class CompraController extends Controller
         //$empresas = Empresa::pluck('razao_social', 'id')->all();
         $data = date('Y-m-d');
         //dd($dataForm);
-        //$this->searchCompra($request, $pessoa); //chamada de método, como passar outro Request sem ser o padrão da função?
         //Fazer esta consulta fora do if me daria a possibilidade de ter o 'id' da pessoa para validações, pois o id da pessoa esta em um campo hidden no form
         
         if ($dataForm['data_venda'] == date('Y-m-d')) {
@@ -108,17 +105,20 @@ class CompraController extends Controller
         }
     }
 
-    public function xml(Request $request)
+    public function xml(Request $request, Pessoa $pessoa)
     {
         $dataForm =  $request->only('xml');
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
 
-        $tempThiago = $xml->NFe->infNFe;
-        dd($tempThiago);
-        //dd($xml);
-        echo $xml['NFe'];
-       
+        $nf = $xml->NFe->infNFe;
+        //dd($nf);
+        $dadosNf[] = ['cpf' => (string)$nf->dest->CPF,
+                      'nome' => (string)$nf->dest->xNome];
+        $cpf = (string)$nf->dest->CPF;
+        $d = $pessoa->search($cpf);
+        dd($d);
+        //echo $xml['NFe'];
     }
 
     public function salvarXml()

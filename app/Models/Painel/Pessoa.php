@@ -32,15 +32,19 @@ class Pessoa extends Model
         return $this->belongsTo(Cidade::class, 'cidade_id');
     }
 
-    public function search($data, $totalPage)
+    public function search($data)
     {
         $pessoas = $this->where(function ($query) use ($data) {
-
-            if (isset($data['pesquisa']) && $data['pesquisa'] != null) {
-
-                $query->where('cpf', $data['pesquisa']);
+            if (isset($data) && $data != null) {
+                //dd($data);
+                if ($query->where('cpf', '=', $data)) {
+                    print_r('entrei aqui');                    
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        })->paginate($totalPage);
-        return $pessoas;
+        });
+        ;
     }
 }
