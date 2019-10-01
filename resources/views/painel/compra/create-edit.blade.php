@@ -49,14 +49,19 @@
                 @endif
                 {!! csrf_field() !!}
                 <div class="form-row">
-                    <div class="form-group col-md-7">
+                    <div class="form-group col-md-2">
+                        <label for="idvalor">Código</label>
+                        <input type="number"  id="idvalor" name = "pessoa_id" class="form-control" value="{{$pessoa->id}}" readonly/>
+                    </div> 
+                    
+                    
+                    <div class="form-group col-md-5">
                         <label for="idvalor">Cliente</label>
-                        <input type="text"  id="idvalor" class="form-control" value="{{$dados->nome}} {{$dados->sobrenome}}" readonly/>
-                        <input type="hidden"  id="idvalor" name = "pessoa_id" class="form-control" value="{{$dados->id}}" readonly/>
+                        <input type="text"  id="idvalor" class="form-control" value="{{$pessoa->nome}} {{$pessoa->sobrenome}}" readonly/>
                     </div>
                     <div class="form-group col-md-5">
                         <label>CPF</label>
-                        <input type="text" name="cpf" id="idvalor" class="form-control" value="{{$dados->cpf}}" readonly/>
+                        <input type="text" name="cpf" id="idvalor" class="form-control" value="{{$pessoa->cpf}}" readonly/>
                     </div>
                 </div>
                 

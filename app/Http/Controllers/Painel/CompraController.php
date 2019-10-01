@@ -41,13 +41,13 @@ class CompraController extends Controller
     public function store(Request $request)
     {
         $titulo = 'Cadastro de Compra';
-        print_r( $this->id);
+        print_r($this->id);
         $dataForm = $request->all();
         $data = date('Y-m-d');
         //BUG
-        if($dataForm['pessoa_id'] == $this->id){
+        if ($dataForm['pessoa_id'] == $this->id) {
             $dataForm['pessoa_id'] = $this->id;
-        }else{
+        } else {
             return redirect()->back()->with('error', 'Código do cliente difere da NFe!');
         }
         //
@@ -117,7 +117,7 @@ class CompraController extends Controller
         }
     }
 
-    public function xml(Request $request, Pessoa $pessoa)
+    public function xml(Request $request)
     {
         $dataForm =  $request->only('xml');
         $xml = file_get_contents($dataForm['xml']);
@@ -127,32 +127,31 @@ class CompraController extends Controller
         //$cpf = (string)$xml->NFe->infNFe->dest->CPF;
         $cpf = '12121232323';
 
-        $pessoa = $pessoa::where('cpf', $cpf)
-               ->orderBy('nome')
-               ->get(); 
+        //realiza consulta da pessoa pelo método que faz todo tratamento do objeto
+        $pessoa = $this->consultarPessoa($cpf);
+        if (isset($pessoa) != null) {
+            $titulo = 'Cadastro de Compra';
+            $empresas = Empresa::pluck('razao_social', 'id')->all();
+
+            return view('painel.compra.create-edit', compact('titulo', 'empresas', 'pessoa'));
+        } else {
+            //chamar tela de cadastro de pessoa com os dados inseridos na nota já na tela
+            print_r('N Tem');
+        }
+    }
+
+    public function consultarPessoa($cpf)
+    {
+        $pessoa = Pessoa::where('cpf', $cpf)
+                        ->orderBy('nome')
+                        ->get();
 
         //Retorna um JSON com os dados da pessoa consultada
         foreach ($pessoa as $valor) {
             $dados = $valor;
-            $this->id = $valor->id;
-            //echo $dados;
-            //echo $this->id;
-        } 
-
-        if(count($pessoa) > 0){
-            $titulo = 'Cadastro de Compra';
-            $empresas = Empresa::pluck('razao_social', 'id')->all();
-
-            return view('painel.compra.create-edit', compact('titulo', 'empresas', 'dados'));
-        }else{
-            //chamar tela de cadastro de pessoa com os dados inseridos na nota já na tela 
-            print_r('N Tem');
+            $dados = json_encode($dados);
         }
-
-
-    }
-
-    public function salvarXml()
-    {
+        //Faz o parsing de JSON para um objeto simples
+        return json_decode($dados);
     }
 }
