@@ -7,15 +7,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Empresa;
 use App\Models\Painel\Pessoa;
+use DB;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class CompraController extends Controller
 {
     private $compra;
+    private $pessoa;
+    private $id;
     private $totalPage = 10;
     
-    public function __construct(Compra $compra)
+    public function __construct(Compra $compra, Pessoa $pessoa)
     {
         $this->compra = $compra;
+        $this->pessoa = $pessoa;
     }
 
     public function index()
@@ -36,11 +41,16 @@ class CompraController extends Controller
     public function store(Request $request)
     {
         $titulo = 'Cadastro de Compra';
+        print_r( $this->id);
         $dataForm = $request->all();
-        //$empresas = Empresa::pluck('razao_social', 'id')->all();
         $data = date('Y-m-d');
-        //dd($dataForm);
-        //Fazer esta consulta fora do if me daria a possibilidade de ter o 'id' da pessoa para validações, pois o id da pessoa esta em um campo hidden no form
+        
+        if($dataForm['pessoa_id'] == $this->id){
+            $dataForm['pessoa_id'] = $this->id;
+        }else{
+            return redirect()->back()->with('error', 'Código do cliente difere da NFe!');
+        }
+        $dataForm['empresa_id'] = (!isset($dataForm['empresa_id'])) ? auth()->user()->empresa_id : $dataForm['empresa_id'];
         
         if ($dataForm['data_venda'] == date('Y-m-d')) {
             $insert = $this->compra->create($dataForm);
@@ -110,15 +120,34 @@ class CompraController extends Controller
         $dataForm =  $request->only('xml');
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
+        
+        $nf = $xml->NFe->infNFe->dest;
+        //$cpf = (string)$xml->NFe->infNFe->dest->CPF;
+        $cpf = '12121232323';
 
-        $nf = $xml->NFe->infNFe;
-        //dd($nf);
-        $dadosNf[] = ['cpf' => (string)$nf->dest->CPF,
-                      'nome' => (string)$nf->dest->xNome];
-        $cpf = (string)$nf->dest->CPF;
-        $d = $pessoa->search($cpf);
-        dd($d);
-        //echo $xml['NFe'];
+        $pessoa = $pessoa::where('cpf', $cpf)
+               ->orderBy('nome')
+               ->get(); 
+
+        //Retorna um JSON com os dados da pessoa consultada
+        foreach ($pessoa as $valor) {
+            $dados = $valor;
+            $this->id = $valor->id;
+            //echo $dados;
+            //echo $this->id;
+        } 
+
+        if(count($pessoa) > 0){
+            $titulo = 'Cadastro de Compra';
+            $empresas = Empresa::pluck('razao_social', 'id')->all();
+
+            return view('painel.compra.create-edit', compact('titulo', 'empresas', 'dados'));
+        }else{
+            //chamar tela de cadastro de pessoa com os dados inseridos na nota já na tela 
+            print_r('N Tem');
+        }
+
+
     }
 
     public function salvarXml()

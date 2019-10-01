@@ -37,14 +37,17 @@ class Pessoa extends Model
         $pessoas = $this->where(function ($query) use ($data) {
             if (isset($data) && $data != null) {
                 //dd($data);
-                if ($query->where('cpf', '=', $data)) {
-                    print_r('entrei aqui');                    
-                    return true;
-                } else {
-                    return false;
-                }
+                $query->where('cpf', $data);
             }
-        });
-        ;
+        })->toSql();
+        if($pessoas){
+            dd($pessoas);
+            print_r('estou aqui tem gente');
+            return  true;
+        }else{
+            print_r('não tem gente');
+            return false;
+        }
+        
     }
 }

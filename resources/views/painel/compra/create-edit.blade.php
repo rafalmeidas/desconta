@@ -45,33 +45,22 @@
         <form class="form" method="post" action="{{route('compra.update', $compra->id)}}">
             {!! method_field('PUT')!!}
             @else
-            <form class="form" method="post" >
-                <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label >XML da nota</label>
-                            <input type="file" name="xml" class="form-control"/>
-                        </div>
-                    </div>
-            </form>
             <form class="" method="post" action="{{route('compra.store')}}">
                 @endif
                 {!! csrf_field() !!}
                 <div class="form-row">
+                    <div class="form-group col-md-7">
+                        <label for="idvalor">Cliente</label>
+                        <input type="text"  id="idvalor" class="form-control" value="{{$dados->nome}} {{$dados->sobrenome}}" readonly/>
+                        <input type="hidden"  id="idvalor" name = "pessoa_id" class="form-control" value="{{$dados->id}}" readonly/>
+                    </div>
                     <div class="form-group col-md-5">
-                                <label for="idempresa">Empresa</label>
-                                <select name="empresa_id" id="idempresa" class="form-control" >
-                                    <option value="0">Escolha uma Empresa</option>
-                                    @foreach($empresas as $id => $nome)
-                                    <option value="{{$id}}"
-                                        @if(isset($compra) && $id == $compra->empresa_id)) 
-                                        selected
-                                        @endif
-                                        >{{$nome}}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
+                        <label>CPF</label>
+                        <input type="text" name="cpf" id="idvalor" class="form-control" value="{{$dados->cpf}}" readonly/>
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group col-md-2">
                         <label for="idvalor">Valor da compra</label>
                         <input type="number" name="valor_total" id="idvalor" placeholder="Digite o valor da compra" class="form-control" value="{{$compra->valor_total ?? old('valor_total')}}"/>

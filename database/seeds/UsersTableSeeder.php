@@ -10,6 +10,7 @@ class UsersTableSeeder extends Seeder {
             'name' => 'Rafael Almeida',
             'email' => 'rafael@gmail.com',
             'password' => bcrypt('123'),
+            'empresa_id' => 1,
             'tipo_login' => 'Administrador', 
             'status' => true
         ]);
@@ -18,6 +19,7 @@ class UsersTableSeeder extends Seeder {
             'name' => 'Usuário',
             'email' => 'u@g.com',
             'password' => bcrypt('123'),
+            'empresa_id' => 1,
             'tipo_login' => 'Usuário', 
             'status' => true
         ]);

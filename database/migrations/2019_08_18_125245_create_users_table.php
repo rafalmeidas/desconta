@@ -17,7 +17,17 @@ class CreateUsersTable extends Migration {
             $table->string('tipo_login');
             $table->boolean('status');
             $table->rememberToken();
+            $table->integer('empresa_id')->unsigned()->nullable(true);
+            $table->integer('pessoa_id')->unsigned()->nullable(true);
             $table->timestamps();
+            $table->foreign('empresa_id')
+                    ->references('id')
+                    ->on('empresas')
+                    ->onDelete('cascade');
+            $table->foreign('pessoa_id')
+                    ->references('id')
+                    ->on('pessoas')
+                    ->onDelete('cascade');
         });
     }
 
