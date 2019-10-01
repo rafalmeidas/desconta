@@ -44,12 +44,14 @@ class CompraController extends Controller
         print_r( $this->id);
         $dataForm = $request->all();
         $data = date('Y-m-d');
-        
+        //BUG
         if($dataForm['pessoa_id'] == $this->id){
             $dataForm['pessoa_id'] = $this->id;
         }else{
             return redirect()->back()->with('error', 'Código do cliente difere da NFe!');
         }
+        //
+
         $dataForm['empresa_id'] = (!isset($dataForm['empresa_id'])) ? auth()->user()->empresa_id : $dataForm['empresa_id'];
         
         if ($dataForm['data_venda'] == date('Y-m-d')) {
