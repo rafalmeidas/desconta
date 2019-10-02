@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\Balance;
 use App\Models\Painel\Empresa;
+use App\Models\Painel\Pessoa;
 use App\Models\Historic;
 
 class User extends Authenticatable {
@@ -37,5 +38,9 @@ class User extends Authenticatable {
 
     public function empresa(){
         return $this->belongsTo(Empresa::class);
+    }
+
+    public function pessoa(){
+        return $this->belongsTo(Pessoa::class);
     }
 }

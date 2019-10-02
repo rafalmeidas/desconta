@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
 //Rotas API
 Route::group(['namespace' => 'Api'], function(){
     Route::get('get_compra', 'ApiController@getCompra');
+    Route::get('get_compra/{id}', 'ApiController@getCompra');
+    Route::get('get_usuario/{id}', 'ApiController@getUsuario');
     Route::get('get_estado', 'ApiController@getEstado');
 });
 

@@ -52,9 +52,7 @@
                     <div class="form-group col-md-2">
                         <label for="idvalor">Código</label>
                         <input type="number"  id="idvalor" name = "pessoa_id" class="form-control" value="{{$pessoa->id}}" readonly/>
-                    </div> 
-                    
-                    
+                    </div>                   
                     <div class="form-group col-md-5">
                         <label for="idvalor">Cliente</label>
                         <input type="text"  id="idvalor" class="form-control" value="{{$pessoa->nome}} {{$pessoa->sobrenome}}" readonly/>

@@ -41,25 +41,32 @@ class CompraController extends Controller
     public function store(Request $request)
     {
         $titulo = 'Cadastro de Compra';
-        print_r($this->id);
         $dataForm = $request->all();
         $data = date('Y-m-d');
+        
         //BUG
-        if ($dataForm['pessoa_id'] == $this->id) {
-            $dataForm['pessoa_id'] = $this->id;
+        //consulta o cliente que veio da nf
+        $pessoa = $this->consultarPessoa($dataForm['cpf']);
+
+        //Validação do cliente
+        if ($dataForm['pessoa_id'] == $pessoa->id) {
+            $dataForm['pessoa_id'] = $pessoa->id;
         } else {
             return redirect()->back()->with('error', 'Código do cliente difere da NFe!');
         }
-        //
-
-        $dataForm['empresa_id'] = (!isset($dataForm['empresa_id'])) ? auth()->user()->empresa_id : $dataForm['empresa_id'];
         
+        //Validação da empresa logada
+        $dataForm['empresa_id'] = (!isset($dataForm['empresa_id'])) ? auth()->user()->empresa_id : auth()->user()->empresa_id;
+
+            
+        //Validação da data atual da compra
         if ($dataForm['data_venda'] == date('Y-m-d')) {
             $insert = $this->compra->create($dataForm);
         } else {
             return redirect()->route('compra.create')->with('error', 'Data incorreta!');
         }
-            
+        
+        
         if ($insert) {
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
