@@ -29,19 +29,22 @@ class ApiController extends Controller
         return  $this->compra->find($id);
     }
 
+    /* Este método é somente de pesquisa
+    ** Os dados do usuario e pessoa vem todos juntos,
+    ** Não tem nenhum cadastro de usuário ligado com pessoa ainda
+    ** Quando for cadastrar no banco real mesmo, você tem que pegar sempre o ultimo id, pois, se não vai ficar errado o cadastro
+    */
     public function getUsuario($id)
     {
         $usuario = json_encode($this->user->find($id));
-        //$usuario = json_decode($usuario);
-        $pessoa = json_encode($this->pessoa->find($usuario->empresa_id));
-        //$pessoa = json_decode($pessoa);
-        $
-
-        
+        $usuario = json_decode($usuario);
+        $pessoa = json_encode($this->pessoa->find($usuario->pessoa_id));
+        $pessoa = json_decode($pessoa);
+        $dados = (Object) array_merge((array) $usuario, (Array) $pessoa);
+        return json_encode($dados);
     }
 
     public function getEstado()
     {
-
     }
 }
