@@ -34,15 +34,12 @@ class CompraController extends Controller
 
     public function create()
     {
-        $titulo = 'Cadastro de Compra';
         return view('painel.compra.xml');
     }
 
     public function store(Request $request)
     {
-        $titulo = 'Cadastro de Compra';
         $dataForm = $request->all();
-        $data = date('Y-m-d');
         
         //BUG
         //consulta o cliente que veio da nf
@@ -70,7 +67,7 @@ class CompraController extends Controller
         if ($insert) {
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Não foi possível realizar a compra');
         }
     }
 
