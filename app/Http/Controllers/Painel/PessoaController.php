@@ -95,4 +95,9 @@ class PessoaController extends Controller
             return redirect()->route('pessoa.show', $id)->with(['errors' => 'Falha ao deletar']);
         }
     }
+
+    public function storePessoa($dadosPessoa){
+        $insert = $this->pessoa->create($dadosPessoa);
+        return $insert;
+    }
 }

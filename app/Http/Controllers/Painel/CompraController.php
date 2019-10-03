@@ -121,27 +121,58 @@ class CompraController extends Controller
         }
     }
 
-    public function xml(Request $request)
+    public function xml(Request $request, Pessoa $pessoa)
     {
         $dataForm =  $request->only('xml');
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
         
         $nf = $xml->NFe->infNFe->dest;
-        //$cpf = (string)$xml->NFe->infNFe->dest->CPF;
-        $cpf = '12121232323';
+        $cpf = (string)$xml->NFe->infNFe->dest->CPF;
+        //Salvar pessoa da nota
+        $cpf = $this->consultarPessoa($cpf);
 
-        //realiza consulta da pessoa pelo método que faz todo tratamento do objeto
-        $pessoa = $this->consultarPessoa($cpf);
-        if (isset($pessoa) != null) {
+        if (isset($cpf) != null) {
             $titulo = 'Cadastro de Compra';
             $empresas = Empresa::pluck('razao_social', 'id')->all();
 
             return view('painel.compra.create-edit', compact('titulo', 'empresas', 'pessoa'));
         } else {
             //chamar tela de cadastro de pessoa com os dados inseridos na nota já na tela
+            foreach ($nf as $valor) {
+                $dados = $valor;
+                
+            }
+            $pessoa->storePessoa($nf);
             print_r('N Tem');
         }
+
+        /*
+        protected $fillable = [
+        'nome',
+        'sobrenome',
+        'tipo_pessoa',
+        'cpf',
+        'cnpj',
+        'rg',
+        'data_nasc',
+        'tel_1',
+        'tel_2',
+        'rua',
+        'bairro',
+        'numero',
+        'cep',
+        'complemento',
+        'cidade_id',
+        'status'
+    ];
+        */
+        //
+        //$cpf = '12121232323';
+
+        //realiza consulta da pessoa pelo método que faz todo tratamento do objeto
+
+
     }
 
     public function consultarPessoa($cpf)
