@@ -142,6 +142,10 @@ class CompraController extends Controller
             return view('painel.compra.create-edit', compact('titulo', 'empresas', 'pessoa'));
         } else {
             //chamar tela de cadastro de pessoa com os dados inseridos na nota já na tela
+            foreach ($nf as $valor) {
+                $dados = $valor;
+                
+            }
             $pessoa->storePessoa($nf);
             print_r('N Tem');
         }
