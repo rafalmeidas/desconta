@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Empresa;
 use App\Models\Painel\Pessoa;
+use App\Http\Controllers\Painel\PessoaController;
 use DB;
 use PhpParser\Node\Expr\Cast\Object_;
 
@@ -41,7 +42,6 @@ class CompraController extends Controller
     {
         $dataForm = $request->all();
         
-        //BUG
         //consulta o cliente que veio da nf
         $pessoa = $this->consultarPessoa($dataForm['cpf']);
 
@@ -124,55 +124,55 @@ class CompraController extends Controller
     public function xml(Request $request, Pessoa $pessoa)
     {
         $dataForm =  $request->only('xml');
+        //dd($dataForm);
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
         
         $nf = $xml->NFe->infNFe->dest;
         $cpf = (string)$xml->NFe->infNFe->dest->CPF;
-        //Salvar pessoa da nota
+        //dd($cpf);
         $cpf = $this->consultarPessoa($cpf);
-
+        $pessoa = (object)$cpf;
+        //dd($cpf);
         if (isset($cpf) != null) {
             $titulo = 'Cadastro de Compra';
-            $empresas = Empresa::pluck('razao_social', 'id')->all();
 
-            return view('painel.compra.create-edit', compact('titulo', 'empresas', 'pessoa'));
+            return view('painel.compra.create-edit', compact('titulo', 'pessoa'));
         } else {
-            //chamar tela de cadastro de pessoa com os dados inseridos na nota já na tela
-            foreach ($nf as $valor) {
-                $dados = $valor;
-                
+            //salvar o cliente da nf no banco
+            $nf = json_encode($nf);
+            $nf = json_decode($nf);
+            //dd($nf);
+            $dados = array(
+                'nome' => $nf->xNome,
+                'sobrenome' => $nf->xNome,
+                'tipo_pessoa' => 'Física',
+                'cpf' => $nf->CPF,
+                'cnpj' => null,
+                'rg' => null,
+                'data_nasc' => null,
+                'tel_1' => null,
+                'tel_2' => null,
+                'rua' => $nf->enderDest->xLgr,
+                'bairro' => $nf->enderDest->xBairro,
+                'numero' => $nf->enderDest->nro,
+                'cep' => $nf->enderDest->CEP,
+                'complemento' => $nf->enderDest->xCpl,
+                'cidade_id' => null,
+                'status' => true
+            ); 
+
+            $insert = PessoaController::storePessoa($dados);
+            if ($insert) {
+                //consulta o ultimo cpf inserido no banco
+                $cpf = $this->consultarPessoa($insert->cpf);
+                $pessoa = (object)$cpf;
+                $titulo = 'Cadastro de Compra';
+                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);;
+            } else {
+                return redirect()->back()->with(['errors' => 'Falha ao cadastrar o cliente']);
             }
-            $pessoa->storePessoa($nf);
-            print_r('N Tem');
         }
-
-        /*
-        protected $fillable = [
-        'nome',
-        'sobrenome',
-        'tipo_pessoa',
-        'cpf',
-        'cnpj',
-        'rg',
-        'data_nasc',
-        'tel_1',
-        'tel_2',
-        'rua',
-        'bairro',
-        'numero',
-        'cep',
-        'complemento',
-        'cidade_id',
-        'status'
-    ];
-        */
-        //
-        //$cpf = '12121232323';
-
-        //realiza consulta da pessoa pelo método que faz todo tratamento do objeto
-
-
     }
 
     public function consultarPessoa($cpf)
@@ -187,6 +187,8 @@ class CompraController extends Controller
             $dados = json_encode($dados);
         }
         //Faz o parsing de JSON para um objeto simples
-        return json_decode($dados);
+        if(isset($dados)){
+            return json_decode($dados);
+        }
     }
 }

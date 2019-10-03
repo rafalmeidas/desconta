@@ -96,8 +96,8 @@ class PessoaController extends Controller
         }
     }
 
-    public function storePessoa($dadosPessoa){
-        $insert = $this->pessoa->create($dadosPessoa);
+    public static function storePessoa($dadosPessoa){
+        $insert = Pessoa::create($dadosPessoa);
         return $insert;
     }
 }
