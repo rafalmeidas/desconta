@@ -29,22 +29,37 @@ class ApiController extends Controller
         return  $this->compra->find($id);
     }
 
-    /* Este método é somente de pesquisa
-    ** Os dados do usuario e pessoa vem todos juntos,
-    ** Não tem nenhum cadastro de usuário ligado com pessoa ainda
-    ** Quando for cadastrar no banco real mesmo, você tem que pegar sempre o ultimo id, pois, se não vai ficar errado o cadastro
-    */
+
     public function getUsuario($id)
     {
-        $usuario = json_encode($this->user->find($id));
+        $usuario = $this->user->find($id);
         $usuario = json_decode($usuario);
-        $pessoa = json_encode($this->pessoa->find($usuario->pessoa_id));
-        $pessoa = json_decode($pessoa);
-        $dados = (Object) array_merge((array) $usuario, (Array) $pessoa);
-        return json_encode($dados);
+        $pessoa = $this->pessoa->find($usuario->empresa_id); // MODIFICAR DE EMPRESA PARA PESSOA
+        $pessoa = json_decode($pessoa); 
+
+        $pessoa_usuario = '{
+            "id": "' .$usuario->id. '",
+            "email": "' .$usuario->email. '",
+            "email_verified_at": "' .$usuario->email_verified_at. '",
+            "pessoa": {
+                "id": "' .$pessoa->id. '",
+                "nome": "' .$pessoa->nome. '",
+                "sobrenome": "' .$pessoa->sobrenome. '",
+                "cpf": "' .$pessoa->cpf. '",
+                "rg": "' .$pessoa->rg. '",
+                "data_nasc": "' .$pessoa->data_nasc. '",
+                "tel_1": "' .$pessoa->tel_1. '",
+                "tel_2": "' .$pessoa->tel_2. '",
+                "rua": "' .$pessoa->rua. '",
+                "bairro": "' .$pessoa->bairro. '",
+                "numero": "' .$pessoa->numero. '",
+                "cep": "' .$pessoa->cep. '",
+                "complemento": "' .$pessoa->complemento. '",
+                "cidade_id": "' .$pessoa->cidade_id. '"
+            }
+        }';
+
+        return $pessoa_usuario;
     }
 
-    public function getEstado()
-    {
-    }
 }

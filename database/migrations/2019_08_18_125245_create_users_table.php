@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration {
             $table->rememberToken();
             $table->integer('empresa_id')->unsigned()->nullable(true);
             $table->integer('pessoa_id')->unsigned()->nullable(true);
+            $table->string('uid_firebase')->nullable();
             $table->timestamps();
             $table->foreign('empresa_id')
                     ->references('id')
