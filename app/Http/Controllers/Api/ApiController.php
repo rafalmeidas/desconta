@@ -30,9 +30,9 @@ class ApiController extends Controller
     }
 
 
-    public function getUsuario($uid)
+    public function getUsuarioComUid($uid)
     {
-        $usuario = $this->user->where( 'uid_firebase' ,$uid)->first();
+        $usuario = $this->user->where('uid_firebase' ,$uid)->first();
         $usuario = json_decode($usuario);
         if( $usuario != null)
         {
@@ -60,10 +60,83 @@ class ApiController extends Controller
                     "cidade_id": "' .$pessoa->cidade_id. '"
                 }
             }';
-
-            return $pessoa_usuario;
         }
-        return "";
+        else {
+            $pessoa_usuario = '{
+                "id": "",
+                "email": "",
+                "email_verified_at": "",
+                "pessoa": {
+                    "id": "",
+                    "nome": "",
+                    "sobrenome": "",
+                    "cpf": "",
+                    "rg": "",
+                    "data_nasc": "",
+                    "tel_1": "",
+                    "tel_2": "",
+                    "rua": "",
+                    "bairro": "",
+                    "numero": "",
+                    "cep": "",
+                    "complemento": "",
+                    "cidade_id": ""
+                }
+            }';
+        }
+        return $pessoa_usuario;
     }
-
+    public function getUsuarioComCpf($cpf)
+    {
+        $pessoa = $this->pessoa->where('cpf' ,$cpf)->first();
+        $pessoa = json_decode($pessoa);
+        if( $pessoa != null)
+        {
+            $pessoa_usuario = '{
+                "id": "",
+                "email": "",
+                "email_verified_at": "",
+                "pessoa": {
+                    "id": "' .$pessoa->id. '",
+                    "nome": "' .$pessoa->nome. '",
+                    "sobrenome": "' .$pessoa->sobrenome. '",
+                    "cpf": "' .$pessoa->cpf. '",
+                    "rg": "' .$pessoa->rg. '",
+                    "data_nasc": "' .$pessoa->data_nasc. '",
+                    "tel_1": "' .$pessoa->tel_1. '",
+                    "tel_2": "' .$pessoa->tel_2. '",
+                    "rua": "' .$pessoa->rua. '",
+                    "bairro": "' .$pessoa->bairro. '",
+                    "numero": "' .$pessoa->numero. '",
+                    "cep": "' .$pessoa->cep. '",
+                    "complemento": "' .$pessoa->complemento. '",
+                    "cidade_id": "' .$pessoa->cidade_id. '"
+                }
+            }';
+        }
+        else {
+            $pessoa_usuario = '{
+                "id": "",
+                "email": "",
+                "email_verified_at": "",
+                "pessoa": {
+                    "id": "",
+                    "nome": "",
+                    "sobrenome": "",
+                    "cpf": "",
+                    "rg": "",
+                    "data_nasc": "",
+                    "tel_1": "",
+                    "tel_2": "",
+                    "rua": "",
+                    "bairro": "",
+                    "numero": "",
+                    "cep": "",
+                    "complemento": "",
+                    "cidade_id": ""
+                }
+            }';
+        }
+        return $pessoa_usuario;
+    }
 }

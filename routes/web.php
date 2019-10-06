@@ -40,7 +40,8 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
 //Rotas API
 Route::group(['namespace' => 'Api'], function(){
 
-    Route::get('get_usuario/{uid}', 'ApiController@getUsuario');
+    Route::get('get_usuarioComUid/{uid}', 'ApiController@getUsuarioComUid');
+    Route::get('get_usuarioComCpf/{cpf}', 'ApiController@getUsuarioComCpf');
 });
 
 Route::post('atualizar_perfil', 'Admin\UserController@profileUpdate')->name('profile.update')->middleware('auth');
