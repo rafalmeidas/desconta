@@ -33,8 +33,8 @@
                     <input type="file" name="xml" class="form-control"/>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <button class="btn btn-primary">Enviar</button>
+                    <div class="form-group col-md-1">
+                        <button class="btn btn-primary">Carregar</button>
                     </div>
                 </div>
             </div>

@@ -117,7 +117,7 @@ return [
             'icon'        => 'fas fa-home',
         ],
 
-                [
+                /*[
                     'text' => 'Estado',
                     'url' => 'painel/estado',
                     'icon' => 'fas fa-flag-usa'
@@ -136,7 +136,7 @@ return [
                     'text' => 'Empresa',
                     'url' => 'painel/empresa',
                     'icon' => 'fas fa-building'
-                ],
+                ],*/
                 [
                     'text' => 'Compra',
                     'url' => 'painel/compra',

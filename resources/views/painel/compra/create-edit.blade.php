@@ -45,7 +45,7 @@
         <form class="form" method="post" action="{{route('compra.update', $compra->id)}}">
             {!! method_field('PUT')!!}
             @else
-            <form class="" method="post" action="{{route('compra.store')}}">
+            <form class="form" method="post" action="{{route('compra.store')}}">
                 @endif
                 {!! csrf_field() !!}
                 <div class="form-row">

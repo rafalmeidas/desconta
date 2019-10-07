@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Painel;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\Painel\CompraFormRequest;
+use App\Http\Requests\Painel\XmlFormRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Empresa;
 use App\Models\Painel\Pessoa;
 use App\Http\Controllers\Painel\PessoaController;
-use DB;
-use PhpParser\Node\Expr\Cast\Object_;
+
 
 class CompraController extends Controller
 {
     private $compra;
     private $pessoa;
-    private $id;
     private $totalPage = 10;
     
     public function __construct(Compra $compra, Pessoa $pessoa)
@@ -38,7 +38,12 @@ class CompraController extends Controller
         return view('painel.compra.xml');
     }
 
-    public function store(Request $request)
+    public function createCompra()
+    {
+        return view('painel.compra.create-edit');
+    }
+
+    public function store(CompraFormRequest $request)
     {
         $dataForm = $request->all();
         
@@ -60,14 +65,13 @@ class CompraController extends Controller
         if ($dataForm['data_venda'] == date('Y-m-d')) {
             $insert = $this->compra->create($dataForm);
         } else {
-            return redirect()->route('compra.create')->with('error', 'Data incorreta!');
+            return redirect()->back()->with('error', 'Data incorreta!');
         }
-        
-        
+            
         if ($insert) {
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
-            return redirect()->back()->with('error', 'Não foi possível realizar a compra');
+            return redirect()->route('compra.create-compra');
         }
     }
 
@@ -85,16 +89,14 @@ class CompraController extends Controller
     {
         $compra = $this->compra->find($id);
         
-        $empresas = Empresa::pluck('razao_social', 'id')->all();
-        $pessoas = Pessoa::pluck('nome', 'id')->all();
         $data = date('Y-m-d');
         $titulo = "Editar Compra: {$compra->pessoa->nome}";
 
-        return view('painel.compra.create-edit', compact('titulo', 'compra', 'empresas', 'pessoas', 'data'));
+        return view('painel.compra.create-edit', compact('titulo', 'compra', 'data'));
     }
 
 
-    public function update(Request $request, $id)
+    public function update(CompraFormRequest $request, $id)
     {
         $dataForm = $request->all();
 
@@ -121,7 +123,7 @@ class CompraController extends Controller
         }
     }
 
-    public function xml(Request $request, Pessoa $pessoa)
+    public function xml(XmlFormRequest $request, Pessoa $pessoa)
     {
         $dataForm =  $request->only('xml');
         //dd($dataForm);
@@ -136,16 +138,18 @@ class CompraController extends Controller
         //dd($cpf);
         if (isset($cpf) != null) {
             $titulo = 'Cadastro de Compra';
-
             return view('painel.compra.create-edit', compact('titulo', 'pessoa'));
         } else {
             //salvar o cliente da nf no banco
             $nf = json_encode($nf);
             $nf = json_decode($nf);
-            //dd($nf);
+
+            //Separando nome e sobrenome no array
+            $nome = explode(" ", $nf->xNome);
+
             $dados = array(
-                'nome' => $nf->xNome,
-                'sobrenome' => $nf->xNome,
+                'nome' => $nome[0],
+                'sobrenome' => $nome[1],
                 'tipo_pessoa' => 'Física',
                 'cpf' => $nf->CPF,
                 'cnpj' => null,
