@@ -23,6 +23,8 @@ class ApiController extends Controller
         $this->pessoa = $pessoa;
     }
 
+
+
     //Empresas
     public function getCompra($id)
     {
@@ -86,6 +88,7 @@ class ApiController extends Controller
         }
         return $pessoa_usuario;
     }
+
     public function getUsuarioComCpf($cpf)
     {
         $pessoa = $this->pessoa->where('cpf' ,$cpf)->first();
@@ -138,5 +141,50 @@ class ApiController extends Controller
             }';
         }
         return $pessoa_usuario;
+    }
+
+    public function setUsuario(Request $request){
+            $pessoa = new Pessoa;
+
+        /*    $pessoa->nome = $request->input("nome");
+            $pessoa->sobrenome = $request->input("sobrenome");
+            $pessoa->tipo_pessoa = "Usuário";
+            $pessoa->cpf = $request->input("cpf");
+            $pessoa->cnpj = null;
+            $pessoa->rg = $request->input("rg");
+            $pessoa->data_nasc = $request->input("dataNasc");
+            $pessoa->tel_1 = $request->input("telefone1");
+            $pessoa->tel_2 = $request->input("telefone2");
+            $pessoa->rua = $request->input("rua");
+            $pessoa->bairro = $request->input("bairro");
+            $pessoa->numero = $request->input("numero");
+            $pessoa->cep = $request->input("cep");
+            $pessoa->complemento = $request->input("complemento");
+            $pessoa->cidade_id = 1;  //arrumar isso -- nao posso setar a cidade direto com id
+
+            $pessoa->save();
+
+            return response()->json($pessoa);
+*/
+        $arraydados  = $request->all();
+        $pessoa->sobrenome = $arraydados['nome'];
+            $pessoa->sobrenome = $arraydados['sobrenome'];
+            $pessoa->tipo_pessoa = "Usuário";
+            $pessoa->cpf = $arraydados['cpf'];
+            $pessoa->cnpj = null;
+            $pessoa->rg = $arraydados['rg'];
+            $pessoa->data_nasc = $arraydados['dataNasc'];
+            $pessoa->tel_1 = $arraydados['telefone1'];
+            $pessoa->tel_2 = $arraydados['telefone2'];
+            $pessoa->rua = $arraydados['rua'];
+            $pessoa->bairro = $arraydados['bairro'];
+            $pessoa->numero = $arraydados['numero'];
+            $pessoa->cep = $arraydados['cep'];
+            $pessoa->complemento = $arraydados['complemento'];
+            $pessoa->cidade_id = 1;  //arrumar isso -- nao posso setar a cidade direto com id
+
+            $pessoa->save();
+
+            return response()->json($pessoa);
     }
 }
