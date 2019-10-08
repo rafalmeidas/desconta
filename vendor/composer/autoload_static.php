@@ -422,6 +422,7 @@ class ComposerStaticInit0de4ccfb803bc0942c218a175633e1f4
         'App\\Http\\Requests\\Painel\\TipoLoginFormRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Painel/TipoLoginFormRequest.php',
         'App\\Http\\Requests\\Painel\\TipoPessoaFormRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Painel/TipoPessoaFormRequest.php',
         'App\\Http\\Requests\\Painel\\UpdateProfileFormRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Painel/UpdateProfileFormRequest.php',
+        'App\\Http\\Requests\\Painel\\XmlFormRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Painel/XmlFormRequest.php',
         'App\\Models\\Balance' => __DIR__ . '/../..' . '/app/Models/Balance.php',
         'App\\Models\\Historic' => __DIR__ . '/../..' . '/app/Models/Historic.php',
         'App\\Models\\Painel\\Cidade' => __DIR__ . '/../..' . '/app/Models/Painel/Cidade.php',

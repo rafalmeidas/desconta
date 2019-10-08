@@ -36,7 +36,6 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel', 'prefix' => 'pa
 Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
     Route::post('painel/compra/create', 'CompraController@createCrompra')->name('compra.create-compra');
     Route::post('painel/compra/xml', 'CompraController@xml')->name('compra.xml');
-    
 });
 
 //Rotas API

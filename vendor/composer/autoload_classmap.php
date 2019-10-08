@@ -43,6 +43,7 @@ return array(
     'App\\Http\\Requests\\Painel\\TipoLoginFormRequest' => $baseDir . '/app/Http/Requests/Painel/TipoLoginFormRequest.php',
     'App\\Http\\Requests\\Painel\\TipoPessoaFormRequest' => $baseDir . '/app/Http/Requests/Painel/TipoPessoaFormRequest.php',
     'App\\Http\\Requests\\Painel\\UpdateProfileFormRequest' => $baseDir . '/app/Http/Requests/Painel/UpdateProfileFormRequest.php',
+    'App\\Http\\Requests\\Painel\\XmlFormRequest' => $baseDir . '/app/Http/Requests/Painel/XmlFormRequest.php',
     'App\\Models\\Balance' => $baseDir . '/app/Models/Balance.php',
     'App\\Models\\Historic' => $baseDir . '/app/Models/Historic.php',
     'App\\Models\\Painel\\Cidade' => $baseDir . '/app/Models/Painel/Cidade.php',
