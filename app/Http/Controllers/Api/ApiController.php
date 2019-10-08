@@ -7,7 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\User;
 use App\Models\Painel\Pessoa;
-use App\Models\Estado;
+use App\Models\Painel\Estado;
+use App\Models\Painel\Cidade;
 use DB;
 
 class ApiController extends Controller
@@ -15,12 +16,16 @@ class ApiController extends Controller
     private $compra;
     private $user;
     private $pessoa;
+    private $cidade;
+    private $estado;
 
-    public function __construct(Compra $compra, User $user, Pessoa $pessoa)
+    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado)
     {
         $this->compra = $compra;
         $this->user = $user;
         $this->pessoa = $pessoa;
+        $this->cidade = $cidade;
+        $this->estado = $estado;
     }
 
 
@@ -41,6 +46,10 @@ class ApiController extends Controller
             $pessoa = $this->pessoa->find($usuario->empresa_id); // MODIFICAR DE EMPRESA PARA PESSOA
             $pessoa = json_decode($pessoa); 
 
+            $cidade = $this->cidade->find($pessoa->cidade_id);
+
+            $estado = $this->estado->find($cidade->estado_id);
+
             $pessoa_usuario = '{
                 "id": "' .$usuario->id. '",
                 "email": "' .$usuario->email. '",
@@ -59,7 +68,8 @@ class ApiController extends Controller
                     "numero": "' .$pessoa->numero. '",
                     "cep": "' .$pessoa->cep. '",
                     "complemento": "' .$pessoa->complemento. '",
-                    "cidade_id": "' .$pessoa->cidade_id. '"
+                    "cidade": "' .$cidade->nome. '",
+                    "estado": "' .$estado->sigla. '"
                 }
             }';
         }
@@ -82,7 +92,8 @@ class ApiController extends Controller
                     "numero": "",
                     "cep": "",
                     "complemento": "",
-                    "cidade_id": ""
+                    "cidade": "",
+                    "estado": ""
                 }
             }';
         }
@@ -95,6 +106,11 @@ class ApiController extends Controller
         $pessoa = json_decode($pessoa);
         if( $pessoa != null)
         {
+
+            $cidade = $this->cidade->find($pessoa->cidade_id);
+
+            $estado = $this->estado->find($cidade->estado_id);
+
             $pessoa_usuario = '{
                 "id": "",
                 "email": "",
@@ -113,7 +129,8 @@ class ApiController extends Controller
                     "numero": "' .$pessoa->numero. '",
                     "cep": "' .$pessoa->cep. '",
                     "complemento": "' .$pessoa->complemento. '",
-                    "cidade_id": "' .$pessoa->cidade_id. '"
+                    "cidade": "' .$cidade->nome. '",
+                    "estado": "' .$estado->sigla. '"
                 }
             }';
         }
@@ -136,7 +153,8 @@ class ApiController extends Controller
                     "numero": "",
                     "cep": "",
                     "complemento": "",
-                    "cidade_id": ""
+                    "cidade": "",
+                    "estado": ""
                 }
             }';
         }
