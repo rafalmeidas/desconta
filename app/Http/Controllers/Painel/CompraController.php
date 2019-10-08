@@ -10,6 +10,7 @@ use App\Models\Painel\Compra;
 use App\Models\Painel\Empresa;
 use App\Models\Painel\Pessoa;
 use App\Http\Controllers\Painel\PessoaController;
+use DB;
 
 
 class CompraController extends Controller
@@ -45,6 +46,9 @@ class CompraController extends Controller
 
     public function store(CompraFormRequest $request)
     {
+        //Inicia  o database Transaction
+        DB::beginTransaction();
+        
         $dataForm = $request->all();
         
         //consulta o cliente que veio da nf
@@ -54,6 +58,8 @@ class CompraController extends Controller
         if ($dataForm['pessoa_id'] == $pessoa->id) {
             $dataForm['pessoa_id'] = $pessoa->id;
         } else {
+            //Fail, desfaz as alterações no banco de dados
+            DB::rollBack();
             return redirect()->back()->with('error', 'Código do cliente difere da NFe!');
         }
         
@@ -65,12 +71,15 @@ class CompraController extends Controller
         if ($dataForm['data_venda'] == date('Y-m-d')) {
             $insert = $this->compra->create($dataForm);
         } else {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Data incorreta!');
         }
             
         if ($insert) {
+            DB::commit();
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
+            DB::rollBack();
             return redirect()->route('compra.create-compra');
         }
     }
