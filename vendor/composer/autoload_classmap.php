@@ -50,6 +50,7 @@ return array(
     'App\\Models\\Painel\\Compra' => $baseDir . '/app/Models/Painel/Compra.php',
     'App\\Models\\Painel\\ContaPagar' => $baseDir . '/app/Models/Painel/ContaPagar.php',
     'App\\Models\\Painel\\ContaReceber' => $baseDir . '/app/Models/Painel/ContaReceber.php',
+    'App\\Models\\Painel\\Desconto' => $baseDir . '/app/Models/Painel/Desconto.php',
     'App\\Models\\Painel\\Empresa' => $baseDir . '/app/Models/Painel/Empresa.php',
     'App\\Models\\Painel\\Estado' => $baseDir . '/app/Models/Painel/Estado.php',
     'App\\Models\\Painel\\Pagamento' => $baseDir . '/app/Models/Painel/Pagamento.php',

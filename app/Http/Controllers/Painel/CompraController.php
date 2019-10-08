@@ -7,7 +7,7 @@ use App\Http\Requests\Painel\CompraFormRequest;
 use App\Http\Requests\Painel\XmlFormRequest;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
-use App\Models\Painel\Empresa;
+use App\Models\Painel\Desconto;
 use App\Models\Painel\Pessoa;
 use App\Http\Controllers\Painel\PessoaController;
 use DB;
@@ -17,12 +17,14 @@ class CompraController extends Controller
 {
     private $compra;
     private $pessoa;
+    private $desconto;
     private $totalPage = 10;
     
-    public function __construct(Compra $compra, Pessoa $pessoa)
+    public function __construct(Compra $compra, Pessoa $pessoa, Desconto $desconto)
     {
         $this->compra = $compra;
         $this->pessoa = $pessoa;
+        $this->desconto = $desconto;
     }
 
     public function index()
@@ -48,7 +50,7 @@ class CompraController extends Controller
     {
         //Inicia  o database Transaction
         DB::beginTransaction();
-        
+
         $dataForm = $request->all();
         
         //consulta o cliente que veio da nf
@@ -74,9 +76,24 @@ class CompraController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Data incorreta!');
         }
-            
+    
         if ($insert) {
             DB::commit();
+            $valorDesconto = (auth()->user()->empresa()->porcentagem_desc * $dataForm['valor_total']) / 100;
+            $dataDesc = array([
+                'pessoa_id' => $dataForm['pessoa_id'], 
+                'cpf' => $dataForm['cpf'],
+                'compra_id' => $insert->id,
+                'valor_compra' => $dataForm['valor_total'],
+                'valor_desconto' => $valorDesconto,
+            ]);
+            $insertDesc = $this->desconto->create($dataDesc);
+            if ($insertDesc) {
+                DB::commit();
+            } else{
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Não foi possível efetuar a compra');
+            }
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
             DB::rollBack();

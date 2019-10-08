@@ -429,6 +429,7 @@ class ComposerStaticInit0de4ccfb803bc0942c218a175633e1f4
         'App\\Models\\Painel\\Compra' => __DIR__ . '/../..' . '/app/Models/Painel/Compra.php',
         'App\\Models\\Painel\\ContaPagar' => __DIR__ . '/../..' . '/app/Models/Painel/ContaPagar.php',
         'App\\Models\\Painel\\ContaReceber' => __DIR__ . '/../..' . '/app/Models/Painel/ContaReceber.php',
+        'App\\Models\\Painel\\Desconto' => __DIR__ . '/../..' . '/app/Models/Painel/Desconto.php',
         'App\\Models\\Painel\\Empresa' => __DIR__ . '/../..' . '/app/Models/Painel/Empresa.php',
         'App\\Models\\Painel\\Estado' => __DIR__ . '/../..' . '/app/Models/Painel/Estado.php',
         'App\\Models\\Painel\\Pagamento' => __DIR__ . '/../..' . '/app/Models/Painel/Pagamento.php',

@@ -14,8 +14,8 @@ class CreateDescontosTable extends Migration
             $table->integer('pessoa_id');
             $table->string('cpf', 45);
             $table->integer('compra_id');
-            $table->float('valor_compra');
-            $table->float('valor_desconto');
+            $table->double('valor_compra', 8, 2);
+            $table->double('valor_desconto', 8, 2);
             $table->timestamps();
         });
     }
