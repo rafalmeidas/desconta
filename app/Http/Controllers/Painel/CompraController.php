@@ -30,7 +30,7 @@ class CompraController extends Controller
     public function index()
     {
         $titulo = "Listagem de Compras";
-        $compras = $this->compra->orderBy('data_venda')->paginate($this->totalPage);
+        $compras = $this->compra->where('empresa_id', auth()->user()->empresa_id)->orderBy('data_venda')->paginate($this->totalPage);
         //dd($compras->data_venda);
         return view('painel.compra.index', compact('titulo', 'compras'));
     }
@@ -76,28 +76,30 @@ class CompraController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Data incorreta!');
         }
-    
-        if ($insert) {
-            DB::commit();
-            $valorDesconto = (auth()->user()->empresa()->porcentagem_desc * $dataForm['valor_total']) / 100;
-            $dataDesc = array([
+
+        //Inserindo dados do desconto
+        if($dataForm['qtde_parcelas'] == 1){
+            $valorDesconto = (double)(auth()->user()->empresa->porcentagem_desc * $dataForm['valor_total']) / 100;
+            $dataDesc = array(
                 'pessoa_id' => $dataForm['pessoa_id'], 
                 'cpf' => $dataForm['cpf'],
                 'compra_id' => $insert->id,
                 'valor_compra' => $dataForm['valor_total'],
                 'valor_desconto' => $valorDesconto,
-            ]);
+            );   
             $insertDesc = $this->desconto->create($dataDesc);
-            if ($insertDesc) {
-                DB::commit();
-            } else{
-                DB::rollBack();
-                return redirect()->back()->with('error', 'Não foi possível efetuar a compra');
-            }
+        }
+        
+        //dd($dataDesc);
+        if ($insert && isset($insertDesc)) {
+            DB::commit();
+            return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
+        }else if($insert){
+            DB::commit();
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
             DB::rollBack();
-            return redirect()->route('compra.create-compra');
+            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');;
         }
     }
 

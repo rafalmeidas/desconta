@@ -14,7 +14,7 @@ class CreateEmpresasTable extends Migration
             $table->string('nome_fantasia');
             $table->string('cnpj');
             $table->string('inscricao_est');
-            $table->string('porcentagem_desc');
+            $table->integer('porcentagem_desc');
             $table->string('tel');
             $table->string('rua');
             $table->string('bairro');
