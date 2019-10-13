@@ -18,4 +18,5 @@ Route::group(['namespace' => 'Api'], function(){
     Route::get('get_usuarioComUid/{uid}', 'ApiController@getUsuarioComUid');
     Route::get('get_usuarioComCpf/{cpf}', 'ApiController@getUsuarioComCpf');
     Route::post('set_usuario', 'ApiController@setUsuario');
+    Route::patch('update_usuario/{id}', 'ApiController@UpUsuario');
 });

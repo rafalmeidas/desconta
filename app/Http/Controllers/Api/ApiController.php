@@ -40,108 +40,84 @@ class ApiController extends Controller
     public function getUsuarioComUid($uid)
     {
         $usuario = $this->user->where('uid_firebase' ,$uid)->first();
-        $usuario = json_decode($usuario);
         if( $usuario != null)
         {
             $pessoa = $this->pessoa->find($usuario->empresa_id); // MODIFICAR DE EMPRESA PARA PESSOA
-            $pessoa = json_decode($pessoa); 
 
-            $cidade = $this->cidade->find($pessoa->cidade_id);
-
-            $estado = $this->estado->find($cidade->estado_id);
-
-            $pessoa_usuario = '{
-                "id": "' .$usuario->id. '",
-                "email": "' .$usuario->email. '",
-                "email_verified_at": "' .$usuario->email_verified_at. '",
-                "pessoa": {
-                    "id": "' .$pessoa->id. '",
-                    "nome": "' .$pessoa->nome. '",
-                    "sobrenome": "' .$pessoa->sobrenome. '",
-                    "cpf": "' .$pessoa->cpf. '",
-                    "rg": "' .$pessoa->rg. '",
-                    "data_nasc": "' .$pessoa->data_nasc. '",
-                    "tel_1": "' .$pessoa->tel_1. '",
-                    "tel_2": "' .$pessoa->tel_2. '",
-                    "rua": "' .$pessoa->rua. '",
-                    "bairro": "' .$pessoa->bairro. '",
-                    "numero": "' .$pessoa->numero. '",
-                    "cep": "' .$pessoa->cep. '",
-                    "complemento": "' .$pessoa->complemento. '",
-                    "cidade": "' .$cidade->nome. '",
-                    "estado": "' .$estado->sigla. '"
-                }
-            }';
-        }
-        else {
-            $pessoa_usuario = '{
-                "id": "",
-                "email": "",
-                "email_verified_at": "",
-                "pessoa": {
-                    "id": "",
-                    "nome": "",
-                    "sobrenome": "",
-                    "cpf": "",
-                    "rg": "",
-                    "data_nasc": "",
-                    "tel_1": "",
-                    "tel_2": "",
-                    "rua": "",
-                    "bairro": "",
-                    "numero": "",
-                    "cep": "",
-                    "complemento": "",
-                    "cidade": "",
-                    "estado": ""
-                }
-            }';
-        }
-        return $pessoa_usuario;
+            return ApiController::retornoUsuario($usuario, $pessoa);
+        } 
+        return ApiController::retornoUsuario(new User, new Pessoa);
     }
 
     public function getUsuarioComCpf($cpf)
     {
         $pessoa = $this->pessoa->where('cpf' ,$cpf)->first();
-        $pessoa = json_decode($pessoa);
         if( $pessoa != null)
         {
+            return ApiController::retornoUsuario(new User, $pessoa);
+        }
+        return ApiController::retornoUsuario(new User, new Pessoa);
+    }
 
-            $cidade = $this->cidade->find($pessoa->cidade_id);
+    public function setUsuario(Request $request){
+        $pessoa = new Pessoa;
+        $params = $request->all();
+    
+        $pessoa->insert($params);
+        $pessoa = $this->pessoa->where('cpf', $params['cpf'])->first();
+
+        return ApiController::retornoUsuario(new User, $pessoa);
+    }
+
+    public function UpUsuario ($id, Request $request){
+        $params = $request->all();
+        $pessoa = Pessoa::find($id);
+        $pessoa->update($params);
+    }
+
+    public function retornoUsuario(User $modelUser, Pessoa $modelPessoa){
+        $modelUser = json_decode($modelUser);
+        $modelPessoa = json_decode($modelPessoa);
+
+        $retorno = "";
+        if($modelUser != null){
+            $retorno = '{
+                "id": "' .$modelUser->id. '",
+                "email": "' .$modelUser->email. '",
+                "email_verified_at": "' .$modelUser->email_verified_at. '",';
+        }else{
+            $retorno = '{
+                "id": "",
+                "email": "",
+                "email_verified_at": "",';
+        }
+        if($modelPessoa != null){
+
+            $cidade = $this->cidade->find($modelPessoa->cidade_id);
 
             $estado = $this->estado->find($cidade->estado_id);
 
-            $pessoa_usuario = '{
-                "id": "",
-                "email": "",
-                "email_verified_at": "",
-                "pessoa": {
-                    "id": "' .$pessoa->id. '",
-                    "nome": "' .$pessoa->nome. '",
-                    "sobrenome": "' .$pessoa->sobrenome. '",
-                    "cpf": "' .$pessoa->cpf. '",
-                    "rg": "' .$pessoa->rg. '",
-                    "data_nasc": "' .$pessoa->data_nasc. '",
-                    "tel_1": "' .$pessoa->tel_1. '",
-                    "tel_2": "' .$pessoa->tel_2. '",
-                    "rua": "' .$pessoa->rua. '",
-                    "bairro": "' .$pessoa->bairro. '",
-                    "numero": "' .$pessoa->numero. '",
-                    "cep": "' .$pessoa->cep. '",
-                    "complemento": "' .$pessoa->complemento. '",
+            $retorno .= '"pessoa": {
+                "id": "' .$modelPessoa->id. '",
+                "nome": "' .$modelPessoa->nome. '",
+                    "sobrenome": "' .$modelPessoa->sobrenome. '",
+                    "cpf": "' .$modelPessoa->cpf. '",
+                    "rg": "' .$modelPessoa->rg. '",
+                    "data_nasc": "' .$modelPessoa->data_nasc. '",
+                    "tel_1": "' .$modelPessoa->tel_1. '",
+                    "tel_2": "' .$modelPessoa->tel_2. '",
+                    "rua": "' .$modelPessoa->rua. '",
+                    "bairro": "' .$modelPessoa->bairro. '",
+                    "numero": "' .$modelPessoa->numero. '",
+                    "cep": "' .$modelPessoa->cep. '",
+                    "complemento": "' .$modelPessoa->complemento. '",
                     "cidade": "' .$cidade->nome. '",
                     "estado": "' .$estado->sigla. '"
-                }
-            }';
-        }
-        else {
-            $pessoa_usuario = '{
+                }';
+        }else{
+            $retorno .= '"pessoa": {
                 "id": "",
-                "email": "",
-                "email_verified_at": "",
-                "pessoa": {
-                    "id": "",
-                    "nome": "",
+                "nome": "",
                     "sobrenome": "",
                     "cpf": "",
                     "rg": "",
@@ -155,62 +131,11 @@ class ApiController extends Controller
                     "complemento": "",
                     "cidade": "",
                     "estado": ""
-                }
-            }';
+                }';
         }
-        return $pessoa_usuario;
-    }
 
-    public function setUsuario(Request $request){
-        $pessoa = new Pessoa;
+        $retorno .= '}';
 
-            $pessoa->nome = $request->input("nome");
-            $pessoa->sobrenome = $request->input("sobrenome");
-            $pessoa->tipo_pessoa = "Física";
-            $pessoa->cpf = $request->input("cpf");
-            $pessoa->cnpj = null;
-            $pessoa->rg = $request->input("rg");
-            $pessoa->data_nasc = $request->input("data_nasc");
-            $pessoa->tel_1 = $request->input("tel1");
-            $pessoa->tel_2 = $request->input("tel2");
-            $pessoa->rua = $request->input("rua");
-            $pessoa->bairro = $request->input("bairro");
-            $pessoa->numero = $request->input("numero");
-            $pessoa->cep = $request->input("cep");
-            $pessoa->complemento = $request->input("complemento");
-            $pessoa->cidade_id = 1;  //arrumar isso -- nao posso setar a cidade direto com id
-
-            $pessoa->save();
-               
-            $cidade = $this->cidade->find($pessoa->cidade_id);
-
-            $estado = $this->estado->find($cidade->estado_id);
-
-            $novaPessoaFormatada = '{
-                "id": "",
-                "email": "",
-                "email_verified_at": "",
-                "pessoa": {
-                    "id": "' .$pessoa->id. '",
-                    "nome": "' .$pessoa->nome. '",
-                    "sobrenome": "' .$pessoa->sobrenome. '",
-                    "cpf": "' .$pessoa->cpf. '",
-                    "rg": "' .$pessoa->rg. '",
-                    "data_nasc": "' .$pessoa->data_nasc. '",
-                    "tel_1": "' .$pessoa->tel_1. '",
-                    "tel_2": "' .$pessoa->tel_2. '",
-                    "rua": "' .$pessoa->rua. '",
-                    "bairro": "' .$pessoa->bairro. '",
-                    "numero": "' .$pessoa->numero. '",
-                    "cep": "' .$pessoa->cep. '",
-                    "complemento": "' .$pessoa->complemento. '",
-                    "cidade": "' .$cidade->nome. '",
-                    "estado": "' .$estado->sigla. '"
-                }
-            }';
-
-          return $novaPessoaFormatada;
-
-        
+        return $retorno;
     }
 }
