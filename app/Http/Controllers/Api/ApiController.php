@@ -162,17 +162,17 @@ class ApiController extends Controller
     }
 
     public function setUsuario(Request $request){
-            $pessoa = new Pessoa;
+        $pessoa = new Pessoa;
 
-        /*    $pessoa->nome = $request->input("nome");
+            $pessoa->nome = $request->input("nome");
             $pessoa->sobrenome = $request->input("sobrenome");
-            $pessoa->tipo_pessoa = "Usuário";
+            $pessoa->tipo_pessoa = "Física";
             $pessoa->cpf = $request->input("cpf");
             $pessoa->cnpj = null;
             $pessoa->rg = $request->input("rg");
-            $pessoa->data_nasc = $request->input("dataNasc");
-            $pessoa->tel_1 = $request->input("telefone1");
-            $pessoa->tel_2 = $request->input("telefone2");
+            $pessoa->data_nasc = $request->input("data_nasc");
+            $pessoa->tel_1 = $request->input("tel1");
+            $pessoa->tel_2 = $request->input("tel2");
             $pessoa->rua = $request->input("rua");
             $pessoa->bairro = $request->input("bairro");
             $pessoa->numero = $request->input("numero");
@@ -181,28 +181,36 @@ class ApiController extends Controller
             $pessoa->cidade_id = 1;  //arrumar isso -- nao posso setar a cidade direto com id
 
             $pessoa->save();
+               
+            $cidade = $this->cidade->find($pessoa->cidade_id);
 
-            return response()->json($pessoa);
-*/
-        $arraydados  = $request->all();
-        $pessoa->sobrenome = $arraydados['nome'];
-            $pessoa->sobrenome = $arraydados['sobrenome'];
-            $pessoa->tipo_pessoa = "Usuário";
-            $pessoa->cpf = $arraydados['cpf'];
-            $pessoa->cnpj = null;
-            $pessoa->rg = $arraydados['rg'];
-            $pessoa->data_nasc = $arraydados['dataNasc'];
-            $pessoa->tel_1 = $arraydados['telefone1'];
-            $pessoa->tel_2 = $arraydados['telefone2'];
-            $pessoa->rua = $arraydados['rua'];
-            $pessoa->bairro = $arraydados['bairro'];
-            $pessoa->numero = $arraydados['numero'];
-            $pessoa->cep = $arraydados['cep'];
-            $pessoa->complemento = $arraydados['complemento'];
-            $pessoa->cidade_id = 1;  //arrumar isso -- nao posso setar a cidade direto com id
+            $estado = $this->estado->find($cidade->estado_id);
 
-            $pessoa->save();
+            $novaPessoaFormatada = '{
+                "id": "",
+                "email": "",
+                "email_verified_at": "",
+                "pessoa": {
+                    "id": "' .$pessoa->id. '",
+                    "nome": "' .$pessoa->nome. '",
+                    "sobrenome": "' .$pessoa->sobrenome. '",
+                    "cpf": "' .$pessoa->cpf. '",
+                    "rg": "' .$pessoa->rg. '",
+                    "data_nasc": "' .$pessoa->data_nasc. '",
+                    "tel_1": "' .$pessoa->tel_1. '",
+                    "tel_2": "' .$pessoa->tel_2. '",
+                    "rua": "' .$pessoa->rua. '",
+                    "bairro": "' .$pessoa->bairro. '",
+                    "numero": "' .$pessoa->numero. '",
+                    "cep": "' .$pessoa->cep. '",
+                    "complemento": "' .$pessoa->complemento. '",
+                    "cidade": "' .$cidade->nome. '",
+                    "estado": "' .$estado->sigla. '"
+                }
+            }';
 
-            return response()->json($pessoa);
+          return $novaPessoaFormatada;
+
+        
     }
 }
