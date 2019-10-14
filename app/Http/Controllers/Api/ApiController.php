@@ -10,6 +10,7 @@ use App\Models\Painel\Pessoa;
 use App\Models\Painel\Estado;
 use App\Models\Painel\Cidade;
 use DB;
+use PhpParser\Node\Param;
 
 class ApiController extends Controller
 {
@@ -42,8 +43,7 @@ class ApiController extends Controller
         $usuario = $this->user->where('uid_firebase' ,$uid)->first();
         if( $usuario != null)
         {
-            $pessoa = $this->pessoa->find($usuario->empresa_id); // MODIFICAR DE EMPRESA PARA PESSOA
-
+            $pessoa = $this->pessoa->find($usuario->pessoa_id); 
             return ApiController::retornoUsuario($usuario, $pessoa);
         } 
         return ApiController::retornoUsuario(new User, new Pessoa);
@@ -59,20 +59,51 @@ class ApiController extends Controller
         return ApiController::retornoUsuario(new User, new Pessoa);
     }
 
-    public function setUsuario(Request $request){
+    public function setUsuario($email, $uid, Request $request){
         $pessoa = new Pessoa;
         $params = $request->all();
-    
-        $pessoa->insert($params);
-        $pessoa = $this->pessoa->where('cpf', $params['cpf'])->first();
+        $pessoa = $pessoa->insert($params);
 
-        return ApiController::retornoUsuario(new User, $pessoa);
+        $pessoa = $this->pessoa->where('cpf' ,$params['cpf'])->first();
+
+        $usuario = new User;
+        $usuario->email = $email;
+        $usuario->uid_firebase = $uid;
+        $usuario->tipo_login = "Usuário"; 
+        $usuario->status = true;
+        $usuario->pessoa_id = $pessoa->id;
+        $usuario->email_verified_at = null;
+        $usuario->save();
+
+        return ApiController::retornoUsuario($usuario, $pessoa);
     }
 
-    public function UpUsuario ($id, Request $request){
+    public function UpUsuario ($id, $email, $uid, Request $request){
         $params = $request->all();
         $pessoa = Pessoa::find($id);
-        $pessoa->update($params);
+        $pessoa->nome = $params['nome'];
+        $pessoa->sobrenome = $params['sobrenome'];
+        $pessoa->rg = $params['rg'];
+        $pessoa->data_nasc = $params['data_nasc'];
+        $pessoa->tel_1 = $params['tel_1'];
+        $pessoa->tel_2 = $params['tel_2'];
+        $pessoa->rua = $params['rua'];
+        $pessoa->bairro = $params['bairro'];
+        $pessoa->numero = $params['numero'];
+        $pessoa->cep = $params['cep'];        
+        $pessoa->complemento = $params['complemento'];
+        $pessoa->save();
+
+        $usuario = new User;
+        $usuario->email = $email;
+        $usuario->uid_firebase = $uid;
+        $usuario->tipo_login = "Usuário"; 
+        $usuario->status = true;
+        $usuario->pessoa_id = $id;
+        $usuario->email_verified_at = null;
+        $usuario->save();
+
+        return ApiController::retornoUsuario($usuario, $pessoa);
     }
 
     public function retornoUsuario(User $modelUser, Pessoa $modelPessoa){

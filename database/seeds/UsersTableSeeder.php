@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder {
             'password' => bcrypt('123'),
             'empresa_id' => 1,
             'tipo_login' => 'Usuário', 
-            'uid_firebase' => 'J3zHtPW1ylQkOZLaZIQCyKA38ZR2',
+            'uid_firebase' => '',
             'status' => true
         ]);
     }

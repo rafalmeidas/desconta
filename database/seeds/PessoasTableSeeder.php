@@ -103,13 +103,13 @@ class PessoasTableSeeder extends Seeder
         ]);
 
         Pessoa::create([
-            'nome' => 'teste',
-            'sobrenome' => '3',
+            'nome' => 'José fagundes',
+            'sobrenome' => 'Antônio',
             'tipo_pessoa' => 'Física',
-            'cpf' => '000000000000000',
-            'cnpj' => '00000000000000',
+            'cpf' => '27506374064',
+            'cnpj' => '',
             'rg' => '0000000000',
-            'data_nasc' => '2018-03-03',
+            'data_nasc' => '2000-03-03',
             'tel_1' => '12345',
             'tel_2' => '12345',
             'rua' => 'rua 3',
