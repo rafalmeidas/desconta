@@ -17,15 +17,10 @@ class CreateParcelasTable extends Migration
             $table->bigIncrements('id'); 
             $table->integer('nr_parcela');
             $table->double('valor_total', 8, 2);
-            $table->integer('empresa_id')->unsigned()->default(0);
-            $table->integer('pessoa_id')->unsigned()->default(0);
-            $table->foreign('empresa_id')
+            $table->integer('compra_id')->unsigned()->default(0);
+            $table->foreign('compra_id')
                     ->references('id')
-                    ->on('empresas')
-                    ->onDelete('cascade');
-            $table->foreign('pessoa_id')
-                    ->references('id')
-                    ->on('pessoas')
+                    ->on('compras')
                     ->onDelete('cascade');
             $table->timestamps();
         });
