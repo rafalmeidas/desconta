@@ -223,4 +223,11 @@ class CompraController extends Controller
             return json_decode($dados);
         }
     }
+
+    public function criarParcelas($quantidadeParcelas)
+    {
+        if(isset($quantidadeParcelas)){
+            
+        }
+    }
 }

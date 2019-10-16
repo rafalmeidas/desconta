@@ -58,6 +58,7 @@ return array(
     'App\\Models\\Painel\\ParcelaReceber' => $baseDir . '/app/Models/Painel/ParcelaReceber.php',
     'App\\Models\\Painel\\Pessoa' => $baseDir . '/app/Models/Painel/Pessoa.php',
     'App\\Models\\Painel\\Recebimentomento' => $baseDir . '/app/Models/Painel/Recebimentomento.php',
+    'App\\Parcela' => $baseDir . '/app/Parcela.php',
     'App\\Policies\\EmpresaPolicy' => $baseDir . '/app/Policies/EmpresaPolicy.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',

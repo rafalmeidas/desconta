@@ -437,6 +437,7 @@ class ComposerStaticInit0de4ccfb803bc0942c218a175633e1f4
         'App\\Models\\Painel\\ParcelaReceber' => __DIR__ . '/../..' . '/app/Models/Painel/ParcelaReceber.php',
         'App\\Models\\Painel\\Pessoa' => __DIR__ . '/../..' . '/app/Models/Painel/Pessoa.php',
         'App\\Models\\Painel\\Recebimentomento' => __DIR__ . '/../..' . '/app/Models/Painel/Recebimentomento.php',
+        'App\\Parcela' => __DIR__ . '/../..' . '/app/Parcela.php',
         'App\\Policies\\EmpresaPolicy' => __DIR__ . '/../..' . '/app/Policies/EmpresaPolicy.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
