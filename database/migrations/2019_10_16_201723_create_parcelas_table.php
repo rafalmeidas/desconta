@@ -6,17 +6,14 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateParcelasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+
     public function up()
     {
         Schema::create('parcelas', function (Blueprint $table) {
             $table->bigIncrements('id'); 
             $table->integer('nr_parcela');
-            $table->double('valor_total', 8, 2);
+            $table->string('nr_boleto');
+            $table->double('valor_parcela', 8, 2);
             $table->integer('compra_id')->unsigned()->default(0);
             $table->foreign('compra_id')
                     ->references('id')
@@ -26,11 +23,6 @@ class CreateParcelasTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('parcelas');

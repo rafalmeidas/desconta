@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Desconto;
 use App\Models\Painel\Pessoa;
+use App\Models\Painel\Parcela;
 use App\Http\Controllers\Painel\PessoaController;
 use DB;
 
@@ -18,13 +19,15 @@ class CompraController extends Controller
     private $compra;
     private $pessoa;
     private $desconto;
+    private $parcela;
     private $totalPage = 10;
-    
-    public function __construct(Compra $compra, Pessoa $pessoa, Desconto $desconto)
+
+    public function __construct(Compra $compra, Pessoa $pessoa, Desconto $desconto, Parcela $parcela)
     {
         $this->compra = $compra;
         $this->pessoa = $pessoa;
         $this->desconto = $desconto;
+        $this->parcela = $parcela;
     }
 
     public function index()
@@ -52,7 +55,7 @@ class CompraController extends Controller
         DB::beginTransaction();
 
         $dataForm = $request->all();
-        
+
         //consulta o cliente que veio da nf
         $pessoa = $this->consultarPessoa($dataForm['cpf']);
 
@@ -64,11 +67,11 @@ class CompraController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Código do cliente difere da NFe!');
         }
-        
+
         //Validação da empresa logada
         $dataForm['empresa_id'] = (!isset($dataForm['empresa_id'])) ? auth()->user()->empresa_id : auth()->user()->empresa_id;
 
-            
+
         //Validação da data atual da compra
         if ($dataForm['data_venda'] == date('Y-m-d')) {
             $insert = $this->compra->create($dataForm);
@@ -78,23 +81,23 @@ class CompraController extends Controller
         }
 
         //Inserindo dados do desconto
-        if($dataForm['qtde_parcelas'] == 1){
-            $valorDesconto = (double)(auth()->user()->empresa->porcentagem_desc * $dataForm['valor_total']) / 100;
+        if ($dataForm['qtde_parcelas'] == 1) {
+            $valorDesconto = (float) (auth()->user()->empresa->porcentagem_desc * $dataForm['valor_total']) / 100;
             $dataDesc = array(
-                'pessoa_id' => $dataForm['pessoa_id'], 
+                'pessoa_id' => $dataForm['pessoa_id'],
                 'cpf' => $dataForm['cpf'],
                 'compra_id' => $insert->id,
                 'valor_compra' => $dataForm['valor_total'],
                 'valor_desconto' => $valorDesconto,
-            );   
+            );
             $insertDesc = $this->desconto->create($dataDesc);
         }
-        
+
         //dd($dataDesc);
         if ($insert && isset($insertDesc)) {
             DB::commit();
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
-        }else if($insert){
+        } else if ($insert) {
             DB::commit();
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
@@ -116,7 +119,7 @@ class CompraController extends Controller
     public function edit($id)
     {
         $compra = $this->compra->find($id);
-        
+
         $data = date('Y-m-d');
         $titulo = "Editar Compra: {$compra->pessoa->nome}";
 
@@ -157,12 +160,12 @@ class CompraController extends Controller
         //dd($dataForm);
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
-        
+
         $nf = $xml->NFe->infNFe->dest;
-        $cpf = (string)$xml->NFe->infNFe->dest->CPF;
+        $cpf = (string) $xml->NFe->infNFe->dest->CPF;
         //dd($cpf);
         $cpf = $this->consultarPessoa($cpf);
-        $pessoa = (object)$cpf;
+        $pessoa = (object) $cpf;
         //dd($cpf);
         if (isset($cpf) != null) {
             $titulo = 'Cadastro de Compra';
@@ -192,13 +195,13 @@ class CompraController extends Controller
                 'complemento' => $nf->enderDest->xCpl,
                 'cidade_id' => null,
                 'status' => true
-            ); 
+            );
 
             $insert = PessoaController::storePessoa($dados);
             if ($insert) {
                 //consulta o ultimo cpf inserido no banco
                 $cpf = $this->consultarPessoa($insert->cpf);
-                $pessoa = (object)$cpf;
+                $pessoa = (object) $cpf;
                 $titulo = 'Cadastro de Compra';
                 return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);;
             } else {
@@ -210,8 +213,8 @@ class CompraController extends Controller
     public function consultarPessoa($cpf)
     {
         $pessoa = Pessoa::where('cpf', $cpf)
-                        ->orderBy('nome')
-                        ->get();
+            ->orderBy('nome')
+            ->get();
 
         //Retorna um JSON com os dados da pessoa consultada
         foreach ($pessoa as $valor) {
@@ -219,15 +222,36 @@ class CompraController extends Controller
             $dados = json_encode($dados);
         }
         //Faz o parsing de JSON para um objeto simples
-        if(isset($dados)){
+        if (isset($dados)) {
             return json_decode($dados);
         }
     }
 
-    public function criarParcelas($quantidadeParcelas)
+    public function criarParcelas($dataForm)
     {
-        if(isset($quantidadeParcelas)){
-            
+        if (isset($dataForm)) {
+
+            $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+            $QuantidadeCaracteres = strlen($Caracteres);
+            $QuantidadeCaracteres--;
+
+            $numBoleto = NULL;
+            for ($x = 1; $x <= 30; $x++) {
+                $Posicao = rand(0, $QuantidadeCaracteres);
+                $numBoleto .= substr($Caracteres, $Posicao, 1);
+            }
+
+            $valorParcela = $dataForm['valor_total'] / $dataForm['qtde_parcelas'];
+
+            for ($i = 0; $i < $dataForm['qtde_parcelas']; $i++) {
+                $dataParcela = array(
+                    'nr_parcela' => $i++,
+                    'nr_boleto'  => $numBoleto,
+                    'valor_parcela'  => $valorParcela,
+                    'compra_id'  => isset($dataForm['']) //Passar método para o metodo store, pois lá consigo pegar o ultimo id inserido cado de certo a inclusão, se não rollback
+                );
+                $this->parcela->create($dataParcela);
+            }
         }
     }
 }
