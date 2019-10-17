@@ -231,7 +231,7 @@ class CompraController extends Controller
     {
         if (isset($dataForm)) {
 
-            $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+            $Caracteres = '0123456789';
             $QuantidadeCaracteres = strlen($Caracteres);
             $QuantidadeCaracteres--;
 
