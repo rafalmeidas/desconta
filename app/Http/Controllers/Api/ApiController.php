@@ -29,15 +29,6 @@ class ApiController extends Controller
         $this->estado = $estado;
     }
 
-
-
-    //Empresas
-    public function getCompra($id)
-    {
-        return  $this->compra->find($id);
-    }
-
-
     public function getUsuarioComUid($uid)
     {
         $usuario = $this->user->where('uid_firebase' ,$uid)->first();
@@ -45,7 +36,7 @@ class ApiController extends Controller
         {
             $pessoa = $this->pessoa->find($usuario->pessoa_id); 
             return ApiController::retornoUsuario($usuario, $pessoa);
-        } 
+        }
         return ApiController::retornoUsuario(new User, new Pessoa);
     }
 
@@ -54,6 +45,11 @@ class ApiController extends Controller
         $pessoa = $this->pessoa->where('cpf' ,$cpf)->first();
         if( $pessoa != null)
         {
+            $usuario = $this->user->where('pessoa_id' ,$pessoa->id)->first();
+            
+            if($usuario != null) return response('Erro ao tentar criar novo usuário com o CPF fornecido', 417)
+            ->header('Content-Type', 'text/plain');
+
             return ApiController::retornoUsuario(new User, $pessoa);
         }
         return ApiController::retornoUsuario(new User, new Pessoa);
@@ -122,11 +118,14 @@ class ApiController extends Controller
                 "email": "",
                 "email_verified_at": "",';
         }
-        if($modelPessoa != null){
+        if($modelPessoa != null) {
 
             $cidade = $this->cidade->find($modelPessoa->cidade_id);
-
-            $estado = $this->estado->find($cidade->estado_id);
+            $estado = null;
+           
+            if ($cidade != null) {
+                $estado = $this->estado->find($cidade->estado_id);
+            }
 
             $retorno .= '"pessoa": {
                 "id": "' .$modelPessoa->id. '",
@@ -141,10 +140,17 @@ class ApiController extends Controller
                     "bairro": "' .$modelPessoa->bairro. '",
                     "numero": "' .$modelPessoa->numero. '",
                     "cep": "' .$modelPessoa->cep. '",
-                    "complemento": "' .$modelPessoa->complemento. '",
+                    "complemento": "' .$modelPessoa->complemento. '"';
+                    if ($cidade == null){
+                        $retorno .= ',
+                        " cidade": "",
+                        "estado": ""';
+                    }else{
+                    $retorno .= ',
                     "cidade": "' .$cidade->nome. '",
-                    "estado": "' .$estado->sigla. '"
-                }';
+                    "estado": "' .$estado->sigla. '"';
+                    }
+                $retorno .= '}';
         }else{
             $retorno .= '"pessoa": {
                 "id": "",
@@ -169,4 +175,12 @@ class ApiController extends Controller
 
         return $retorno;
     }
+
+    public function GetCompras($id)
+    {
+        $compra = $this->compra->where('pessoa_id' ,$id)->toSql();
+
+        return  response()->json($compra);
+    }
+
 }

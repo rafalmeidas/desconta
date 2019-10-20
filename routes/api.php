@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'Api'], function(){
 
+    Route::get('get_compras/{uid}', 'ApiController@GetCompras');
     Route::get('get_usuarioComUid/{uid}', 'ApiController@getUsuarioComUid');
     Route::get('get_usuarioComCpf/{cpf}', 'ApiController@getUsuarioComCpf');
     Route::post('set_usuario/{email}/{uid}', 'ApiController@setUsuario');
