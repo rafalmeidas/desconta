@@ -10,7 +10,6 @@ use App\Models\Painel\Pessoa;
 use App\Models\Painel\Estado;
 use App\Models\Painel\Cidade;
 use DB;
-use PhpParser\Node\Param;
 
 class ApiController extends Controller
 {
@@ -178,7 +177,12 @@ class ApiController extends Controller
 
     public function GetCompras($id)
     {
-        $compra = $this->compra->where('pessoa_id' ,$id)->toSql();
+
+        $compra = DB::select("SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia
+                               FROM compras, empresas
+                               WHERE compras.empresa_id  = empresas.id
+                               AND pessoa_id = $id;");
+        
 
         return  response()->json($compra);
     }
