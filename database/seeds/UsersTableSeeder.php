@@ -10,7 +10,7 @@ class UsersTableSeeder extends Seeder {
             'name' => 'Rafael Almeida',
             'email' => 'rafael@gmail.com',
             'password' => bcrypt('123'),
-            'empresa_id' => 1,
+            'empresa_id' => 2,
             'tipo_login' => 'Administrador', 
             'status' => true
         ]);

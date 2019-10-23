@@ -13,7 +13,6 @@ use App\Models\Painel\Parcela;
 use App\Http\Controllers\Painel\PessoaController;
 use DB;
 
-
 class CompraController extends Controller
 {
     private $compra;
@@ -93,16 +92,46 @@ class CompraController extends Controller
             $insertDesc = $this->desconto->create($dataDesc);
         }
 
+        if ($dataForm['qtde_parcelas'] > 1) {
+            $Caracteres = '0123456789';
+            $QuantidadeCaracteres = strlen($Caracteres);
+            $QuantidadeCaracteres--;
+
+            print_r($valorParcela = ($dataForm['valor_total'] / $dataForm['qtde_parcelas']));
+
+            for ($i = 0; $i < $dataForm['qtde_parcelas']; $i++) {
+                $numBoleto = null;
+                
+                for ($x = 1; $x <= 30; $x++) {
+                    $Posicao = rand(0, $QuantidadeCaracteres);
+                    $numBoleto .= substr($Caracteres, $Posicao, 1);
+                }
+                $dataParcela = array(
+                    'nr_parcela' => $i+1,
+                    'nr_boleto'  => $numBoleto,
+                    'valor_parcela'  => $valorParcela,
+                    'compra_id'  => $insert->id //Pega o id da ultima compra
+                );
+                $insertParcela = $this->parcela->create($dataParcela);
+                if ($insertParcela) {
+                    DB::commit();
+                } else {
+                    DB::rollBack();
+                }
+            }
+        }
+
         //dd($dataDesc);
         if ($insert && isset($insertDesc)) {
             DB::commit();
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
-        } else if ($insert) {
+        } elseif ($insert) {
             DB::commit();
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
             DB::rollBack();
-            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');;
+            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');
+            ;
         }
     }
 
@@ -203,7 +232,8 @@ class CompraController extends Controller
                 $cpf = $this->consultarPessoa($insert->cpf);
                 $pessoa = (object) $cpf;
                 $titulo = 'Cadastro de Compra';
-                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);;
+                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);
+                ;
             } else {
                 return redirect()->back()->with(['errors' => 'Falha ao cadastrar o cliente']);
             }
@@ -229,29 +259,5 @@ class CompraController extends Controller
 
     public function criarParcelas($dataForm)
     {
-        if (isset($dataForm)) {
-
-            $Caracteres = '0123456789';
-            $QuantidadeCaracteres = strlen($Caracteres);
-            $QuantidadeCaracteres--;
-
-            $numBoleto = NULL;
-            for ($x = 1; $x <= 30; $x++) {
-                $Posicao = rand(0, $QuantidadeCaracteres);
-                $numBoleto .= substr($Caracteres, $Posicao, 1);
-            }
-
-            $valorParcela = $dataForm['valor_total'] / $dataForm['qtde_parcelas'];
-
-            for ($i = 0; $i < $dataForm['qtde_parcelas']; $i++) {
-                $dataParcela = array(
-                    'nr_parcela' => $i++,
-                    'nr_boleto'  => $numBoleto,
-                    'valor_parcela'  => $valorParcela,
-                    'compra_id'  => isset($dataForm['']) //Passar método para o metodo store, pois lá consigo pegar o ultimo id inserido cado de certo a inclusão, se não rollback
-                );
-                $this->parcela->create($dataParcela);
-            }
-        }
     }
 }
