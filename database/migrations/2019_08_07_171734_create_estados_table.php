@@ -11,7 +11,6 @@ class CreateEstadosTable extends Migration {
             $table->bigIncrements('id');
             $table->string('nome', 45)->unique();
             $table->string('sigla', 2);
-            $table->boolean('status');
             $table->timestamps();
         });
     }
