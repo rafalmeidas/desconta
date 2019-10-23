@@ -9,6 +9,7 @@ use App\User;
 use App\Models\Painel\Pessoa;
 use App\Models\Painel\Estado;
 use App\Models\Painel\Cidade;
+use App\Models\Painel\Empresa;
 use DB;
 
 class ApiController extends Controller
@@ -18,14 +19,16 @@ class ApiController extends Controller
     private $pessoa;
     private $cidade;
     private $estado;
+    private $empresa;
 
-    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado)
+    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado, Empresa $empresa)
     {
         $this->compra = $compra;
         $this->user = $user;
         $this->pessoa = $pessoa;
         $this->cidade = $cidade;
         $this->estado = $estado;
+        $this->empresa = $empresa;
     }
 
     public function getUsuarioComUid($uid)
@@ -175,16 +178,38 @@ class ApiController extends Controller
         return $retorno;
     }
 
+
+    public function GetEmpresas($id){
+
+        $empresa = DB::select("SELECT empresas.id, empresas.razao_social, empresas.nome_fantasia, empresas.cnpj, empresas.inscricao_est,
+                                    empresas.porcentagem_desc, empresas.tel, empresas.rua, empresas.bairro, empresas.numero, empresas.cep, 
+                                    empresas.complemento, empresas.cidade_id, empresas.status
+                                FROM empresas, compras
+                                WHERE compras.pessoa_id = $id
+                                AND empresas.id = compras.empresa_id
+                                GROUP BY empresas.id; "
+                             );
+
+        return  response()->json($empresa);
+    }
+
     public function GetCompras($id)
     {
 
         $compra = DB::select("SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia
                                FROM compras, empresas
                                WHERE compras.empresa_id  = empresas.id
-                               AND pessoa_id = $id;");
+                               AND pessoa_id = $id;"
+                            );
         
 
         return  response()->json($compra);
     }
+
+
+
+    //compra = id, data_venda, qtde_parcelas, valor_total, 
+    //parcelas = id, nr_parcela, nr_boleto, valor_parcela
+    //empresa_id(id, razao social, nome fantasia, cnpj, telefone,  endereço completo)
 
 }
