@@ -108,40 +108,29 @@ return [
 
     'menu' => [
         [
-            'text' => 'search',
-            'search' => true,
-        ],
-        [
             'text'        => 'Home',
             'url'         => 'admin',
             'icon'        => 'fas fa-home',
         ],
 
-                /*[
-                    'text' => 'Estado',
-                    'url' => 'painel/estado',
-                    'icon' => 'fas fa-flag-usa'
-                ],
+        [
+            'text' => 'Compra',
+            'url' => 'painel/compra',
+            'icon' => 'fas fa-shopping-cart'
+        ],
+        
+        [
+            'text' => 'Relatórios',
+            'icon' => 'fas fa-file-pdf',
+            'submenu' => [
                 [
-                    'text' => 'Cidade',
-                    'url' => 'painel/cidade',
-                    'icon' => 'far fa-flag'
+                    'url' => 'painel/relatorio/compra',
+                    'text' => 'Relatório de Compra',
+                    'icon' => 'far fa-file-pdf'
                 ],
-                [
-                    'text' => 'Pessoa',
-                    'url' => 'painel/pessoa',
-                    'icon' => 'fas fa-user-alt'
-                ],
-                [
-                    'text' => 'Empresa',
-                    'url' => 'painel/empresa',
-                    'icon' => 'fas fa-building'
-                ],*/
-                [
-                    'text' => 'Compra',
-                    'url' => 'painel/compra',
-                    'icon' => 'fas fa-shopping-cart'
-                ],
+            ]
+        ],
+        
 
     ],
 

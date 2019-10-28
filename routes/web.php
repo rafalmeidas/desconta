@@ -38,6 +38,11 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
     Route::post('painel/compra/xml', 'CompraController@xml')->name('compra.xml');
 });
 
+Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
+    Route::get('painel/relatorio/compra', 'RelatorioController@relatorioCompra')->name('relatorio.compra');
+
+});
+
 //Rotas API
 
 
