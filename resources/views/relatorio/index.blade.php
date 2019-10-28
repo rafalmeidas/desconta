@@ -18,14 +18,14 @@
 
 @section('content')
 <div class="box">
+        <div class="card">
+                <div class="container" style="width:100%">
+                  <h4><b>Pesquisa de relatórios</b></h4>
+                  <p>Selecione o relatório e o filtro que deseja e logo depois de clicar em gerar o PDF será exibido na tela.</p>
+                </div>
+            </div>
     <div class="box-body">
     @include('includes.alerts')
-    <div class="card">
-        <div class="container" style="width:100%">
-          <h4><b>John Doe</b></h4>
-          <p>Architect & Engineer</p>
-        </div>
-    </div>
     <form class="form" method="post" action="{{route('relatorio.gerar')}}">
             {!! csrf_field() !!}
             <div class="form-group col-md-3">
@@ -58,7 +58,7 @@
 
             <div class="form-row">
                 <div class="form-group col-md-12">
-                    <button class="btn btn-primary">Enviar</button>
+                    <button class="btn btn-primary">Gerar</button>
                 </div>
             </div>
                 
