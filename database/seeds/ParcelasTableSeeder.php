@@ -10,14 +10,16 @@ class ParcelasTableSeeder extends Seeder
     {
         Parcela::create([
             'nr_parcela' => 1, 
-            'nr_boleto' => '222223333366666111112222233333', 
+            'nr_boleto' => '222223333366666111112222233333',
+            'boleto_pago' => 'N',
             'valor_parcela' => 10, 
             'compra_id' => 1
         ]);
 
         Parcela::create([
             'nr_parcela' => 2, 
-            'nr_boleto' => '222223333366666111112222255555', 
+            'nr_boleto' => '222223333366666111112222255555',
+            'boleto_pago' => 'N', 
             'valor_parcela' => 10, 
             'compra_id' => 1
         ]);

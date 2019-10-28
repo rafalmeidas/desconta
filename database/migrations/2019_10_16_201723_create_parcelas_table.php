@@ -13,6 +13,7 @@ class CreateParcelasTable extends Migration
             $table->bigIncrements('id'); 
             $table->integer('nr_parcela');
             $table->string('nr_boleto');
+            $table->string('boleto_pago', 1);
             $table->double('valor_parcela', 8, 2);
             $table->integer('compra_id')->unsigned()->default(0);
             $table->foreign('compra_id')

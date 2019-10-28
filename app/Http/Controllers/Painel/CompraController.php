@@ -89,26 +89,38 @@ class CompraController extends Controller
                 'valor_compra' => $dataForm['valor_total'],
                 'valor_desconto' => $valorDesconto,
             );
+
+            $numBoleto = $this->gerarNumBoleto();
+
+            $dataParcela = array(
+                'nr_parcela' => 1,
+                'nr_boleto'  => $numBoleto,
+                'boleto_pago' => 'S',
+                'valor_parcela'  => $dataForm['valor_total'],
+                'compra_id'  => $insert->id //Pega o id da ultima compra
+            );
             $insertDesc = $this->desconto->create($dataDesc);
+            $insertParcela = $this->parcela->create($dataParcela);
+            if ($insertDesc && $insertParcela) {
+                DB::commit();
+            } else {
+                DB::rollBack();
+            }
         }
 
         if ($dataForm['qtde_parcelas'] > 1) {
-            $Caracteres = '0123456789';
-            $QuantidadeCaracteres = strlen($Caracteres);
-            $QuantidadeCaracteres--;
 
-            print_r($valorParcela = ($dataForm['valor_total'] / $dataForm['qtde_parcelas']));
+
+            $valorParcela = ($dataForm['valor_total'] / $dataForm['qtde_parcelas']);
 
             for ($i = 0; $i < $dataForm['qtde_parcelas']; $i++) {
-                $numBoleto = null;
-                
-                for ($x = 1; $x <= 30; $x++) {
-                    $Posicao = rand(0, $QuantidadeCaracteres);
-                    $numBoleto .= substr($Caracteres, $Posicao, 1);
-                }
+                //gerar o número de boleto
+                $numBoleto = $this->gerarNumBoleto();
+
                 $dataParcela = array(
-                    'nr_parcela' => $i+1,
+                    'nr_parcela' => $i + 1,
                     'nr_boleto'  => $numBoleto,
+                    'boleto_pago' => 'N',
                     'valor_parcela'  => $valorParcela,
                     'compra_id'  => $insert->id //Pega o id da ultima compra
                 );
@@ -130,8 +142,7 @@ class CompraController extends Controller
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
             DB::rollBack();
-            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');
-            ;
+            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');;
         }
     }
 
@@ -232,8 +243,7 @@ class CompraController extends Controller
                 $cpf = $this->consultarPessoa($insert->cpf);
                 $pessoa = (object) $cpf;
                 $titulo = 'Cadastro de Compra';
-                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);
-                ;
+                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);;
             } else {
                 return redirect()->back()->with(['errors' => 'Falha ao cadastrar o cliente']);
             }
@@ -257,7 +267,17 @@ class CompraController extends Controller
         }
     }
 
-    public function criarParcelas($dataForm)
+    public function gerarNumBoleto()
     {
+        $Caracteres = '0123456789';
+        $QuantidadeCaracteres = strlen($Caracteres);
+        $QuantidadeCaracteres--;
+        $numBoleto = null;
+        for ($x = 1; $x <= 30; $x++) {
+            $Posicao = rand(0, $QuantidadeCaracteres);
+            $numBoleto .= substr($Caracteres, $Posicao, 1);
+        }
+
+        return $numBoleto;
     }
 }
