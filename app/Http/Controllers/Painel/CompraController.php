@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Painel;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\Painel\CompraFormRequest;
 use App\Http\Requests\Painel\XmlFormRequest;
 use App\Http\Controllers\Controller;

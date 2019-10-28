@@ -39,7 +39,9 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
 });
 
 Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
-    Route::get('painel/relatorio/compra', 'RelatorioController@relatorioCompra')->name('relatorio.compra');
+    Route::any('painel/relatorio/compra', 'RelatorioController@relatorioCompra')->name('relatorio.compra');
+    Route::any('painel/relatorio/gerar', 'RelatorioController@selecionaRelatorio')->name('relatorio.gerar');
+    Route::any('painel/relatorio', 'RelatorioController@index');
 
 });
 
