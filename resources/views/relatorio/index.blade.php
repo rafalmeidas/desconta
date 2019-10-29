@@ -84,25 +84,33 @@
             document.getElementById('div').innerHTML = 
                 '<label for="iddata">Dia</label>' +
                 '<input type="date" name="data" id="iddata" class="form-control" value="{{$data}}" />';
-            break;
+
+                document.getElementById('div1').innerHTML = '';
+                break;
 
             case '2':
             document.getElementById('div').innerHTML = 
                 '<label for="idmes">Mês</label>' +
                 '<input type="text" name="mes" id="idmes" placeholder="Digite 02 para fevereiro" class="form-control" />';
-            break;
+
+                document.getElementById('div1').innerHTML = '';
+                break;
 
             case '3':
             document.getElementById('div').innerHTML = 
                 '<label for="idano">Ano</label>' +
                 '<input type="text" name="ano" id="idano" placeholder="Ex: 2019, 2020, etc.." class="form-control" />';
-            break;
+
+                document.getElementById('div1').innerHTML = '';
+                break;
 
             case '4':
             document.getElementById('div').innerHTML = 
                 '<label for="idcpf">CPF do Cliente</label>' +
                 '<input type="text" name="cpf" id="idcpf" placeholder="Digite o CPF" class="form-control" />';
-            break;
+
+                document.getElementById('div1').innerHTML = '';
+                break;
 
             case '5':
             document.getElementById('div').innerHTML = 
@@ -112,7 +120,7 @@
                 document.getElementById('div1').innerHTML = 
                 '<label for="iddatafin">Data final</label>' +
                 '<input type="date" name="datafin" id="iddatafin" class="form-control" />';
-            break;
+                break;
         }
     }
 </script>
