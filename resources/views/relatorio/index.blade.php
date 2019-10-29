@@ -46,22 +46,25 @@
                 <div class="form-group col-md-3">
                     <label for="idfiltro">Filtro</label>
                     <select name="filtro" id="idfiltro" class="form-control" onclick="desabilitaOpcao()">
-                        <option value="0">Escolha um filtro</option>
+                        <option value="0" selected>Escolha um filtro</option>
                         @foreach($filtros as $id => $nome)
                         <option value="{{$id}}"
-                                @if($id == 1)) 
-                                selected
-                                @endif
                                 >{{$nome}}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <div class="form-group col-md-6" id="div">
-                    <label for="idcpf">Cliente (CPF)</label>
-                    <input type="text" name="cpf" id="idcpf" placeholder="Digite o cpf" class="form-control" />
+                <div class="form-group col-md-3" id="div">
+                    
                 </div>
 
+                <div class="form-group col-md-3" id="div1">
+                    
+                </div>
+
+            </div>
+            <div>
+                
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12">
@@ -79,20 +82,36 @@
         switch($select.value){
             case '1':
             document.getElementById('div').innerHTML = 
-                '<label for="idcpf">Cliente (CPF)</label>' + 
-                '<input type="text" name="cpf" id="idcpf" placeholder="Digite aqui" class="form-control" />';
+                '<label for="iddata">Dia</label>' +
+                '<input type="date" name="data" id="iddata" class="form-control" value="{{$data}}" />';
             break;
 
             case '2':
             document.getElementById('div').innerHTML = 
-                '<label for="idcpf">Nome (CPF)</label>' + 
-                '<input type="text" name="cpf" id="idcpf" placeholder="Digite ali" class="form-control" />';
+                '<label for="idmes">Mês</label>' +
+                '<input type="text" name="mes" id="idmes" placeholder="Digite 02 para fevereiro" class="form-control" />';
             break;
 
             case '3':
             document.getElementById('div').innerHTML = 
-                '<label for="idcpf">Data (CPF)</label>' + 
-                '<input type="text" name="cpf" id="idcpf" placeholder="Digite acula" class="form-control" />';
+                '<label for="idano">Ano</label>' +
+                '<input type="text" name="ano" id="idano" placeholder="Ex: 2019, 2020, etc.." class="form-control" />';
+            break;
+
+            case '4':
+            document.getElementById('div').innerHTML = 
+                '<label for="idcpf">CPF do Cliente</label>' +
+                '<input type="text" name="cpf" id="idcpf" placeholder="Digite o CPF" class="form-control" />';
+            break;
+
+            case '5':
+            document.getElementById('div').innerHTML = 
+                '<label for="iddatainic">Data início</label>' +
+                '<input type="date" name="datainic" id="iddatainic" class="form-control" />';
+
+                document.getElementById('div1').innerHTML = 
+                '<label for="iddatafin">Data final</label>' +
+                '<input type="date" name="datafin" id="iddatafin" class="form-control" />';
             break;
         }
     }

@@ -17,9 +17,13 @@ class RelatorioController extends Controller
         $filtros = [
             1 => 'Dia',
             2 => 'Mês',
-            3 => 'Ano'
+            3 => 'Ano',
+            4 => 'CPF',
+            5 => 'Intervalo de datas',
         ];
-        return view('relatorio.index', compact('relatorios', 'filtros'));
+
+        $data = date('Y-m-d');
+        return view('relatorio.index', compact('relatorios', 'filtros', 'data'));
     }
 
     public function selecionaRelatorio(Request $request){
