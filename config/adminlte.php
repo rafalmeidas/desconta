@@ -122,14 +122,18 @@ return [
         [
             'text' => 'Relatórios',
             'icon' => 'fas fa-file-pdf',
-            'url' => 'painel/relatorio',
-            /*'submenu' => [
+            'submenu' => [
                 [
                     'url' => 'painel/relatorio/compra',
                     'text' => 'Relatório de Compra',
                     'icon' => 'far fa-file-pdf'
                 ],
-            ]*/
+                [
+                    'url' => 'painel/relatorio/compra',
+                    'text' => 'Relatório Financeiro',
+                    'icon' => 'far fa-file-pdf'
+                ],
+            ]
         ],
         
 
