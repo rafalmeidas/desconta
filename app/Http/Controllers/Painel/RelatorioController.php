@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Painel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
+use DB;
 
 class RelatorioController extends Controller
 {
@@ -22,7 +23,7 @@ class RelatorioController extends Controller
         ];
 
         $data = date('Y-m-d');
-        return view('relatorio.index', compact('filtros', 'data'));
+        return view('relatorio.compra.index', compact('filtros', 'data'));
     }
 
     public function selecionaRelatorio(Request $request)
@@ -37,9 +38,12 @@ class RelatorioController extends Controller
             return $this->relatorioCompra($dataForm);
         } elseif ($filtro == 2) {
             if (isset($dataForm['data'])) {
+                //dd($dataForm);
                 return $this->relatorioCompra($dataForm);
             } else {
                 //redirecionar com erro
+                $erro = true;
+                return redirect()->route('index.compra', compact('erro'))->with(['error' => 'Insira a data corretamente.']);
             }
         }
     }
@@ -47,21 +51,32 @@ class RelatorioController extends Controller
     public function relatorioCompra($dados)
     {
         $compra = new Compra();
-        
-        $titulo = 'Relatório de Compras';
-        $nomeView = 'relatorio.relatorio-compra';
+
+        //View padrão do relatório
+        $nomeView = 'relatorio.compra.relatorio-todas-compras';
 
         //Pegando o tipo do filtro selecionado
         $tipoRelatorio = $dados['filtro'];
+        //seta se faz download
+        if ($dados['download'] == 1) {
+            $download = true;
+        } else {
+            $download = false;
+        }
         switch ($tipoRelatorio) {
             case 1:
+                $titulo = 'Relatório de Compras (Todas)';
                 $relatorio = $compra->where('empresa_id', auth()->user()->empresa_id)->orderBy('data_venda')->paginate($this->totalPage);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
             case 2:
-
+                $titulo = 'Relatório de Compras (Por data)';
+                $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                ->where('compras.data_venda', '=', $dados['data'])
+                ->paginate($this->totalPage);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, false, $download);
                 break;
             case 3:
-
                 break;
             case 4:
 
@@ -70,20 +85,26 @@ class RelatorioController extends Controller
 
                 break;
         }
-        return $this->gerarPDF($nomeView, $relatorio, $titulo, true);
     }
 
-    public function gerarPDF($nomeView, $dados, $titulo, $paisagem = false)
+    public function gerarPDF($nomeView, $dados, $titulo, $paisagem = false, $download = false)
     {
         $relatorio = $dados;
+        //dd($relatorio);
         $titulo = $titulo;
-        if ($paisagem == true) {
+
+        if ($paisagem == true && $download == true) {
+            return \PDF::loadView($nomeView, compact('relatorio', 'titulo'))
+                ->setPaper('a4', 'landscape')
+                ->download($titulo.".pdf");
+        }else if($paisagem == true && $download == false){
             return \PDF::loadView($nomeView, compact('relatorio', 'titulo'))
                 ->setPaper('a4', 'landscape')
                 ->stream($titulo.".pdf");
-        } else {
+        }else if($download == true && $paisagem == false){
             return \PDF::loadView($nomeView, compact('relatorio', 'titulo'))
-                ->stream($titulo + ".pdf");
+                ->setPaper('a4', 'landscape')
+                ->download($titulo.".pdf");
         }
     }
 }

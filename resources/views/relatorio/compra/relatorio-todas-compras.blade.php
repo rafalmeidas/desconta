@@ -30,7 +30,13 @@
 
         @empty
  
-        <h1>Nenhuma compra cadastrada.</h1>
+        <tr>
+                <td>Nenhum</td>
+                <td>Nenhum</td>
+                <td>Nenhum</td>
+                <td>Nenhum</td>
+                <td>Nenhum</td>
+            </tr>
  
         @endforelse
 

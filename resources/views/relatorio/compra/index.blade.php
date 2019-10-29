@@ -24,7 +24,7 @@
             {!! csrf_field() !!}
             <div class="form-row">
             
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label for="idfiltro">Filtro</label>
                     <select name="filtro" id="idfiltro" class="form-control" onclick="desabilitaOpcao()">
                         <option value="0" selected>Escolha um filtro</option>
@@ -32,6 +32,13 @@
                         <option value="{{$id}}"
                                 >{{$nome}}</option>
                         @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="iddownload">Baixar</label><br>
+                    <select name="download" class="form-control" id="iddownload" onclick="fazDownload()">
+                            <option value="1">Sim</option>
+                            <option value="2" selected>Não</option>
                     </select>
                 </div>
 
@@ -57,23 +64,31 @@
     </div>
 </div>
 <script>
-    const $select = document.getElementById('idfiltro')
+    const select = document.getElementById('idfiltro')
+    const download = document.getElementById('iddownload');
+    function fazDownload(){
+        switch(download.value){
+            case '1': 
+                document.getElementById('form').target = '_self';
+                break;
+
+            case '2': 
+                document.getElementById('form').target = '_blank';
+                break
+        }
+    }
 
     function desabilitaOpcao(){
-        switch($select.value){
+        switch(select.value){
             case '0':
                 document.getElementById('div').innerHTML = '';
 
                 document.getElementById('div1').innerHTML = '';
-
-                document.getElementById('form').target = '_self';
                 break;
             case '1':
                 document.getElementById('div').innerHTML = '';
 
                 document.getElementById('div1').innerHTML = '';
-
-                document.getElementById('form').target = '_blank';
                 break;
 
             case '2':
@@ -81,7 +96,7 @@
                 '<label for="iddata">Dia</label>' +
                 '<input type="date" name="data" id="iddata" class="form-control" value="{{$data}}" />';
 
-                document.getElementById('div1').innerHTML = '';
+                document.getElementById('div1').innerHTML = '';              
                 break;
 
             case '3':
