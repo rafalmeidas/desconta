@@ -9,6 +9,7 @@ class Compra extends Model {
         'data_venda',
         'qtde_parcelas',
         'valor_total',
+        'compra_paga',
         'empresa_id',
         'pessoa_id'
     ];

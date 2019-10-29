@@ -12,6 +12,7 @@ class ComprasTableSeeder extends Seeder
             'data_venda' => '2019-10-16',
             'qtde_parcelas' => 2,
             'valor_total' => 20,
+            'compra_paga' => 'N',
             'empresa_id' => 1,
             'pessoa_id' => 2
         ]);

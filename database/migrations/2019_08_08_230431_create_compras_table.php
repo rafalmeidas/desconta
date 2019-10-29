@@ -18,6 +18,7 @@ class CreateComprasTable extends Migration
             $table->date('data_venda');
             $table->integer('qtde_parcelas');
             $table->double('valor_total', 8, 2);
+            $table->string('compra_paga', 1);
             $table->integer('empresa_id')->unsigned()->default(0);
             $table->integer('pessoa_id')->unsigned()->default(0);
             $table->timestamps();

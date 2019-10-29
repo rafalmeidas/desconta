@@ -69,10 +69,23 @@ class CompraController extends Controller
         //Validação da empresa logada
         $dataForm['empresa_id'] = (!isset($dataForm['empresa_id'])) ? auth()->user()->empresa_id : auth()->user()->empresa_id;
 
+        
+
 
         //Validação da data atual da compra
         if ($dataForm['data_venda'] == date('Y-m-d')) {
-            $insert = $this->compra->create($dataForm);
+            //Validação de conta paga
+            if ($dataForm['qtde_parcelas'] == 1) {
+                $dataForm['compra_paga'] = (!isset($dataForm['compra_paga'])) ? 'S'  : 'S';
+                if(isset($dataForm['compra_paga'])){
+                    $insert = $this->compra->create($dataForm);
+                }
+            }else{
+                $dataForm['compra_paga'] = (!isset($dataForm['compra_paga'])) ? 'N'  : 'N';
+                if(isset($dataForm['compra_paga'])){
+                    $insert = $this->compra->create($dataForm);
+                }
+            }
         } else {
             DB::rollBack();
             return redirect()->back()->with('error', 'Data incorreta!');

@@ -30,7 +30,7 @@
 
         @empty
  
-        <h1>Nenhum Produto Cadastrado.</h1>
+        <h1>Nenhuma compra cadastrada.</h1>
  
         @endforelse
 
