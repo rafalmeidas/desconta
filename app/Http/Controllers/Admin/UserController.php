@@ -40,7 +40,7 @@ class UserController extends Controller {
             //dd($data);
             //$upload = $request->image->save(public_path('/uploads/avatars/' . $nameFile) );
             
-           $upload= Image::make($avatar)->resize(500,400)->save(public_path('/uploads/avatars/' . $nameFile) );
+           $upload= Image::make($avatar)->resize(300,300)->save(public_path('/uploads/avatars/' . $nameFile) );
 
             if (!$upload) 
                 return redirect()
