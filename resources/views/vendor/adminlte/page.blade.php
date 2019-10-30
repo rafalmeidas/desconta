@@ -68,7 +68,7 @@
                                     <!-- User image -->
                                     <li class="user-header">
 
-                                        <img src="/uploads/avatars/{{auth()->user()->image}}" class="img-circle">
+                                        <img src="/uploads/avatars/{{auth()->user()->image}}" style="width:100px; height:100px; border-radius:50%">
 
                                         <p>
                                             {{auth()->user()->name}}

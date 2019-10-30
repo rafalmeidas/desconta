@@ -34,13 +34,13 @@ class UserController extends Controller {
             }
             //dd($name);
             $extension = $request->image->extension();
-            $nameFile = auth()->user()->id.auth()->user()->name.".{$extension}";
+            $nameFile = $user->id.kebab_case($user->name).".{$extension}";
 
             $data['image'] = $nameFile;
             //dd($data);
             //$upload = $request->image->save(public_path('/uploads/avatars/' . $nameFile) );
             
-           $upload= Image::make($avatar)->save(public_path('/uploads/avatars/' . $nameFile) );
+           $upload= Image::make($avatar)->resize(500,400)->save(public_path('/uploads/avatars/' . $nameFile) );
 
             if (!$upload) 
                 return redirect()
