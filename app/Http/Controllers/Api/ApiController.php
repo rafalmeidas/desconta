@@ -10,6 +10,7 @@ use App\Models\Painel\Pessoa;
 use App\Models\Painel\Estado;
 use App\Models\Painel\Cidade;
 use App\Models\Painel\Empresa;
+use App\Models\Painel\Parcela;
 use DB;
 
 class ApiController extends Controller
@@ -20,8 +21,9 @@ class ApiController extends Controller
     private $cidade;
     private $estado;
     private $empresa;
+    private $parcela;
 
-    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado, Empresa $empresa)
+    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado, Empresa $empresa, Parcela $parcela)
     {
         $this->compra = $compra;
         $this->user = $user;
@@ -29,6 +31,7 @@ class ApiController extends Controller
         $this->cidade = $cidade;
         $this->estado = $estado;
         $this->empresa = $empresa;
+        $this->parcela = $parcela;
     }
 
     public function getUsuarioComUid($uid)
@@ -193,23 +196,47 @@ class ApiController extends Controller
         return  response()->json($empresa);
     }
 
-    public function GetCompras($id)
+    public function GetCompras($idUsuario, $idEmpresa)
     {
 
         $compra = DB::select("SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia
                                FROM compras, empresas
                                WHERE compras.empresa_id  = empresas.id
-                               AND pessoa_id = $id;"
+                               AND empresas.id = $idEmpresa
+                               AND pessoa_id = $idUsuario;"
                             );
-        
 
         return  response()->json($compra);
     }
 
+    public function GetParcelas($idCompra)
+    {
 
+        $parcela = DB::select("SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago
+                                FROM public.parcelas
+                                where compra_id = $idCompra
+                                ORDER BY boleto_pago = 'S';"
+                            );
+        
+
+        return  response()->json($parcela);
+    }
 
     //compra = id, data_venda, qtde_parcelas, valor_total, 
     //parcelas = id, nr_parcela, nr_boleto, valor_parcela
     //empresa_id(id, razao social, nome fantasia, cnpj, telefone,  endereço completo)
 
+
+    public function PagarParcela($idParcela){
+        $parcela = Parcela::find($idParcela);
+       // $params = $request->all();
+        $parcela->boleto_pago = 'S'; //$params['boleto_pago'];
+
+        $retorno = $parcela->save();
+       
+        if($retorno){
+            return response('Compra paga com sucesso ', 200)
+            ->header('Content-Type', 'text/plain');
+        }
+    }
 }
