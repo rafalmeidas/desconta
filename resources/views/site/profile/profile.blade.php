@@ -25,9 +25,9 @@
 
     <div class="form-group">
         @if (auth()->user()->image != null)
-        <img src="{{ url('storage/users/'.auth()->user()->image) }}" style="max-width:50px;">
+        <img src="{{ asset('storage/users/'.auth()->user()->image) }}" style="max-width:50px;">
         @else
-        <img src="{{ url('storage/users/user.png')}}" style="max-width:50px;">
+        <img src="{{ asset('storage/users/user.png')}}" style="max-width:50px;">
         @endif
         <label for="idimage">Imagem</label>
         <input type="file" name="image" id="idimage" class="form-control">

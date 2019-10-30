@@ -74,7 +74,7 @@ class RelatorioController extends Controller
                 $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                 ->where('compras.data_venda', '=', $dados['data'])
                 ->paginate($this->totalPage);
-                return $this->gerarPDF($nomeView, $relatorio, $titulo, false, $download);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
             case 3:
                 break;
@@ -103,8 +103,10 @@ class RelatorioController extends Controller
                 ->stream($titulo.".pdf");
         }else if($download == true && $paisagem == false){
             return \PDF::loadView($nomeView, compact('relatorio', 'titulo'))
-                ->setPaper('a4', 'landscape')
                 ->download($titulo.".pdf");
+        }else if($download == false && $paisagem == false){
+            return \PDF::loadView($nomeView, compact('relatorio', 'titulo'))
+                ->stream($titulo.".pdf");
         }
     }
 }

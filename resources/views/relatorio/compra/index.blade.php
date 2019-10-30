@@ -20,7 +20,7 @@
 <div class="box">
     <div class="box-body">
     @include('includes.alerts')
-    <form class="form" method="post" action="{{route('relatorio.gerar')}}" target="" id="form">
+    <form class="form" method="post" action="{{route('relatorio.gerar')}}" target="_blank" id="form">
             {!! csrf_field() !!}
             <div class="form-row">
             

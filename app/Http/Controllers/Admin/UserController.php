@@ -25,9 +25,9 @@ class UserController extends Controller {
         $data['image'] = $user->image;
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             if ($user->image) {
-                $name = $user->image;
+                $name = pathinfo($user->image)['filename'];
             } else {
-                $name = $user->id . kebab_case($user->name);
+                $name = $user->id.kebab_case($user->name);
             }
 
             $extension = $request->image->extension();
@@ -37,14 +37,14 @@ class UserController extends Controller {
 
             $upload = $request->image->storeAs('users', $nameFile);
 
-            if (!$upload) {
+            if (!$upload) 
                 return redirect()
                                 ->back()
                                 ->with('error', 'Falha ao fazer o upload da imagem!');
-            }
+            
         }
 
-        $update = auth()->user()->update($data);
+        $update = $user->update($data);
 
         if ($update) {
             return redirect()

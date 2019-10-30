@@ -75,9 +75,9 @@
                                     <li class="user-header">
 
                                         @if (auth()->user()->image != null)
-                                        <img src="{{ url('storage/users/'.auth()->user()->image) }}" class="img-circle" alt="User Image">
+                                        <img src="{{ asset('storage/users/'.auth()->user()->image) }}" class="img-circle" alt="User Image">
                                         @else
-                                        <img src="{{ url('storage/users/user.png')}}" class="img-circle">
+                                        <img src="{{ asset('storage/users/user.png')}}" class="img-circle">
                                         @endif
 
 
