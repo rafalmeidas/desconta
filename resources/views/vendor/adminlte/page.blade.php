@@ -61,29 +61,17 @@
                             <!-- DROPDOWN DO USUÁRIO  -->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-
-                                    @if (auth()->user()->image != null)
-                                    <img src="{{ url('storage/users/'.auth()->user()->image) }}" class="user-image">
+                                    <img src="/uploads/avatars/{{auth()->user()->image}}" class="user-image">
                                     <span class="hidden-xs">{{auth()->user()->name}}</span>
-                                    @else
-                                    <img src="{{ url('storage/users/user.png')}}" class="user-image"">
-                                    <span class="hidden-xs">{{auth()->user()->name}}</span>
-                                    @endif
                                 </a>
                                 <ul class="dropdown-menu">
                                     <!-- User image -->
                                     <li class="user-header">
 
-                                        @if (auth()->user()->image != null)
-                                        <img src="{{ asset('storage/users/'.auth()->user()->image) }}" class="img-circle" alt="User Image">
-                                        @else
-                                        <img src="{{ asset('storage/users/user.png')}}" class="img-circle">
-                                        @endif
-
+                                        <img src="/uploads/avatars/{{auth()->user()->image}}" class="img-circle">
 
                                         <p>
                                             {{auth()->user()->name}}
-                                            <small>Member since Ago. 2019</small>
                                         </p>
                                     </li>
                                     <!-- Menu Footer-->

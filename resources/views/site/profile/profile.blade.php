@@ -24,11 +24,7 @@
     </div>
 
     <div class="form-group">
-        @if (auth()->user()->image != null)
-        <img src="{{ asset('storage/users/'.auth()->user()->image) }}" style="max-width:50px;">
-        @else
-        <img src="{{ asset('storage/users/user.png')}}" style="max-width:50px;">
-        @endif
+        <img src="/uploads/avatars/{{auth()->user()->image}}" style="max-width:30px;">
         <label for="idimage">Imagem</label>
         <input type="file" name="image" id="idimage" class="form-control">
     </div>

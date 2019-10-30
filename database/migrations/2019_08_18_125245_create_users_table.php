@@ -13,7 +13,7 @@ class CreateUsersTable extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable(true);
             $table->string('password')->nullable(true);
-            $table->string('image', 100)->nullable(true);
+            $table->string('image')->default('user.png');
             $table->string('tipo_login');
             $table->boolean('status');
             $table->rememberToken()->nullable(true);

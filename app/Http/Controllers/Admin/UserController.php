@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\Painel\UpdateProfileFormRequest;
 use App\Http\Controllers\Controller;
 use App\User;
+use Image;
 
 class UserController extends Controller {
     
@@ -26,16 +27,20 @@ class UserController extends Controller {
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             if ($user->image) {
                 $name = pathinfo($user->image)['filename'];
+                $avatar = $request->file('image');
             } else {
                 $name = $user->id.kebab_case($user->name);
+                $avatar = $request->file('image');
             }
-
+            //dd($name);
             $extension = $request->image->extension();
-            $nameFile = "{$name}.{$extension}";
+            $nameFile = auth()->user()->id.auth()->user()->name.".{$extension}";
 
             $data['image'] = $nameFile;
-
-            $upload = $request->image->storeAs('users', $nameFile);
+            //dd($data);
+            //$upload = $request->image->save(public_path('/uploads/avatars/' . $nameFile) );
+            
+           $upload= Image::make($avatar)->save(public_path('/uploads/avatars/' . $nameFile) );
 
             if (!$upload) 
                 return redirect()
