@@ -63,9 +63,11 @@
         </form>
     </div>
 </div>
-<script>
-    const select = document.getElementById('idfiltro')
+
+<script language="javascript">
+    const select = document.getElementById('idfiltro');
     const download = document.getElementById('iddownload');
+
     function fazDownload(){
         switch(download.value){
             case '1': 
@@ -102,7 +104,7 @@
             case '3':
             document.getElementById('div').innerHTML = 
                 '<label for="idmes">Mês</label>' +
-                '<input type="text" name="mes" id="idmes" placeholder="Digite 02 para fevereiro" class="form-control" />';
+                '<input type="date" name="mes" id="idmes" class="form-control" value="{{$data}}" />';
 
                 document.getElementById('div1').innerHTML = '';
                 break;
@@ -110,7 +112,7 @@
             case '4':
             document.getElementById('div').innerHTML = 
                 '<label for="idano">Ano</label>' +
-                '<input type="text" name="ano" id="idano" placeholder="Ex: 2019, 2020, etc.." class="form-control" />';
+                '<input type="date" name="ano" id="idano" class="form-control" value="{{$data}}" />';
 
                 document.getElementById('div1').innerHTML = '';
                 break;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Painel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
+use App\Models\Painel\Pessoa;
 use DB;
 
 class RelatorioController extends Controller
@@ -42,13 +43,44 @@ class RelatorioController extends Controller
                 return $this->relatorioCompra($dataForm);
             } else {
                 //redirecionar com erro
-                $erro = true;
-                return redirect()->route('index.compra', compact('erro'))->with(['error' => 'Insira a data corretamente.']);
+                return redirect()->route('index.compra')->with(['error' => 'Insira a data corretamente.']);
+            }
+        } else if($filtro == 3){
+            if(isset($dataForm['mes'])){
+                return $this->relatorioCompra($dataForm, $dataForm['mes']);
+            }else {
+                //redirecionar com erro
+
+                return redirect()->route('index.compra')->with(['error' => 'Insira a data corretamente.']);
+            }
+            
+        }else if($filtro == 4){
+            if(isset($dataForm['ano'])){
+                return $this->relatorioCompra($dataForm, $dataForm['ano']);
+            }else {
+                //redirecionar com erro
+                return redirect()->route('index.compra')->with(['error' => 'Insira a data corretamente.']);
+            }
+            
+        }else if($filtro == 5){
+            if(isset($dataForm['cpf'])){
+                return $this->relatorioCompra($dataForm, $dataForm['cpf']);
+            }else {
+                //redirecionar com erro
+                return redirect()->route('index.compra')->with(['error' => 'Insira o CPF corretamente.']);
+            }
+            
+        }else if($filtro == 6){
+            if(isset($dataForm['datainic']) && isset($dataForm['datafin'])){
+                return $this->relatorioCompra($dataForm, $dataForm['datainic'], $dataForm['datafin']);
+            }else {
+                //redirecionar com erro
+                return redirect()->route('index.compra')->with(['error' => 'Insira as datas corretamente.']);
             }
         }
     }
 
-    public function relatorioCompra($dados)
+    public function relatorioCompra($dados, $adicional = null, $adicional1 = null)
     {
         $compra = new Compra();
 
@@ -57,6 +89,7 @@ class RelatorioController extends Controller
 
         //Pegando o tipo do filtro selecionado
         $tipoRelatorio = $dados['filtro'];
+        //dd($tipoRelatorio);
         //seta se faz download
         if ($dados['download'] == 1) {
             $download = true;
@@ -70,20 +103,67 @@ class RelatorioController extends Controller
                 return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
             case 2:
-                $titulo = 'Relatório de Compras (Por data)';
+                $titulo = 'Relatório de Compras (Por dia)';
                 $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                 ->where('compras.data_venda', '=', $dados['data'])
                 ->paginate($this->totalPage);
                 return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
             case 3:
+                $titulo = 'Relatório de Compras (Por Mês)';
+
+                $arrayData = explode("-",$adicional);
+
+                $start = $arrayData[0].'-'.$arrayData[1].'-01'; 
+                $end = $arrayData[0].'-'.$arrayData[1].'-31';
+
+                $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                ->whereBetween('data_venda', array($start, $end))
+                ->paginate($this->totalPage);
+                //dd($relatorio);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
             case 4:
-
+                $titulo = 'Relatório de Compras (Por Ano)';
+            
+                $arrayData = explode("-",$adicional);
+            
+                $start = $arrayData[0].'-'.'01'.'-01'; 
+                $end = $arrayData[0].'-'.'12'.'-31';
+            
+                $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                ->whereBetween('data_venda', array($start, $end))
+                ->paginate($this->totalPage);
+                //dd($relatorio);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
             case 5:
+                $titulo = 'Relatório de Compras (Por CPF)';
 
+                //consulta da pessoa por cpf
+                $pessoa = new Pessoa();
+                $pessoa = $pessoa->where('cpf', '=', $adicional)->first();
+
+
+                //dd($pessoa);
+                $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                ->where('pessoa_id', '=', $pessoa->id)
+                ->paginate($this->totalPage);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
                 break;
+            case 6:
+                $titulo = 'Relatório de Compras (Por Intervalo de datas)';
+            
+                $start = $adicional; 
+                $end = $adicional1;
+            
+                $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                ->whereBetween('data_venda', array($start, $end))
+                ->paginate($this->totalPage);
+                //dd($relatorio);
+                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
+                break;
+
         }
     }
 
