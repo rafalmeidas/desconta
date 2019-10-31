@@ -6,6 +6,7 @@
 @section('content_header')
 
 <h1 class="title-pg">
+        
     <a href="{{route('home')}}"><span class="fas fa-backward"></span></a>
     Relatório de Compra</h1>
 
