@@ -99,9 +99,28 @@ class RelatorioFinanceiroController extends Controller
         switch ($tipoRelatorio) {
             case 1:
                 $titulo = 'Relatório Finaceiro (Todas)';
-                $relatorio = $compra->where('empresa_id', auth()->user()->empresa_id)->get();
+                //$relatorio = $compra->where('empresa_id', auth()->user()->empresa_id)->get();
                 //dd($relatorio);
-                $parcela = $parcela->where('compra_id', '=', $relatorio->id);
+                //Preciso acessar o id da compra consultada anteriormente
+                //$parcela = $parcela->where('compra_id', '=', $relatorio->id);
+                // -tabela compra
+                // nome cliente
+                // data_venda
+                // qtde_parcelas
+                // valor_total
+                // Paga
+
+                // -tabela de parcela
+                // nr_parcela
+                // boleto_pago
+                // valor_parcela
+                $idEmpresa = auth()->user()->empresa_id;
+                $compra = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, ' 
+                               FROM compras, parcelas
+                               WHERE compras.empresa_id  = $idEmpresa"
+                            );
+
+
                 return $this->gerarPDF($nomeView, $relatorio, $parcela, $titulo, true, $download);
                 break;
             case 2:
