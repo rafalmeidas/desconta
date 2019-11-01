@@ -13,4 +13,8 @@ class Parcela extends Model
         'valor_parcela',
         'compra_id'
     ];
+
+    public function compra(){
+        return $this->belongsTo(Compra::class, 'compra_id');
+    }
 }

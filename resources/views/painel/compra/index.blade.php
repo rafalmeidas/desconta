@@ -29,7 +29,6 @@
                 <th>Empresa</th>
                 <th>Dt Criação</th>
                 <th>Dt Atualização</th>
-                <th width="105px">Ações</th>
             </tr>
             @foreach($compras as $compra)
             <tr>
@@ -46,22 +45,6 @@
                 <td>{{date( 'd/m/Y - H:m:s' , strtotime($compra->created_at))}}</td>
                 <td>{{date( 'd/m/Y - H:m:s' , strtotime($compra->updated_at))}}</td>
 
-                <td>
-                    <div class="btn-toolbar justify-content-between" role="toolbar">
-                        <div class="btn-group" role="group">
-                            <a href="{{route('compra.edit',$compra->id)}}">
-                                <button type="button" class="edit btn btn-primary ">
-                                    <span class="far fa-edit"></span>
-                                </button>
-                            </a>
-                            <a href="{{route('compra.show',$compra->id)}}">
-                                <button type="button" class="delete btn btn-primary ">
-                                    <span class="fas fa-eye"></span>
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                </td>
             </tr>
             @endforeach
         </table>

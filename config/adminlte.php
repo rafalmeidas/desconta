@@ -129,7 +129,7 @@ return [
                     'icon' => 'far fa-file-pdf'
                 ],
                 [
-                    'url' => 'painel/relatorio/compra',
+                    'url' => 'painel/relatorio/financeiro',
                     'text' => 'Relatório Financeiro',
                     'icon' => 'far fa-file-pdf'
                 ],

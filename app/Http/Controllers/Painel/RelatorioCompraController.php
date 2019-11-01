@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Painel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
+use App\Models\Painel\Parcela;
 use App\Models\Painel\Pessoa;
 use DB;
 
-class RelatorioController extends Controller
+class RelatorioCompraController extends Controller
 {
     private $totalPage = 10;
 
-    public function indexCompra()
+    public function index()
     {
         $filtros = [
             1 => 'Todas',
@@ -83,6 +84,7 @@ class RelatorioController extends Controller
     public function relatorioCompra($dados, $adicional = null, $adicional1 = null)
     {
         $compra = new Compra();
+        $parcela = new Parcela();
 
         //View padrão do relatório
         $nomeView = 'relatorio.compra.relatorio-todas-compras';
@@ -170,7 +172,7 @@ class RelatorioController extends Controller
     public function gerarPDF($nomeView, $dados, $titulo, $paisagem = false, $download = false)
     {
         $relatorio = $dados;
-        //dd($relatorio);
+        
         $titulo = $titulo;
 
         if ($paisagem == true && $download == true) {
