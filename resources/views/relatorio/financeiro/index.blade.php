@@ -30,7 +30,7 @@
                     <select name="filtro" id="idfiltro" class="form-control" onclick="desabilitaOpcao()">
                         <option value="0" selected>Escolha um filtro</option>
                         @foreach($filtros as $id => $nome)
-                        <option value="{{$id}}"
+                        <option value="{{$id}}" @if($id == 1) selected @endif
                                 >{{$nome}}</option>
                         @endforeach
                     </select>

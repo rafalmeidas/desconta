@@ -1,19 +1,5 @@
 <!DOCTYPE html>
 <html>
-    <!--
-        -tabela compra
-        nome cliente
-        data_venda
-        qtde_parcelas
-        valor_total
-        Paga
-
-        -tabela de parcela
-        nr_parcela
-        boleto_pago
-        valor_parcela
-
-    -->
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>{{$titulo}}</title>
@@ -36,18 +22,55 @@
                 @forelse($relatorio as $dado)
 
                 <tr>
-                    <td>{{$dado->pessoa->nome}}</td>
+                    <td style="background-color: #32b251;">{{$dado->pessoa->nome}}</td>
                     <td>{{date( 'd/m/Y' , strtotime($dado->data_venda))}}</td>
                     <td>{{$dado->qtde_parcelas}}</td>
-                    <td>{{$dado->valor_total}}</td>
-                    <td>{{$dado->empresa->razao_social}}</td>
+                    <td>{{number_format($dado->valor_total, 2, ',','.')}}</td>
                     <td>{{$dado->compra_paga}}</td>
+                </tr>
+
+                <tr>
+                    <td colspan="5">
+                        <table class="table table-striped table-bordered table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Nº Parcela</th>
+                                        <th>Nº Boleto</th>
+                                        <th>Boleto Pago</th>
+                                        <th>Valor Parcela</th>
+                                    </tr>
+
+                                    @forelse($parcela as $d)
+                                    @foreach ($d as $item)
+                                    @if($item->compra_id == $dado->id){
+                                        <tr>
+                                            <td>{{$item->nr_parcela}}</td>
+                                            <td>{{$item->nr_boleto}}</td>
+                                            <td>{{$item->boleto_pago}}</td>
+                                            <td>{{number_format($item->valor_parcela, 2, ',','.')}}</td>
+                                        </tr>
+                                    }
+                                    @endif
+                                    @endforeach
+                                    
+                                    @empty
+            
+                                    <tr>
+                                        <td>Nenhum</td>
+                                        <td>Nenhum</td>
+                                        <td>Nenhum</td>
+                                        <td>Nenhum</td>
+                                    </tr>
+                                    
+                                    @endforelse
+
+                        </table>
+                    </td>
                 </tr>
             
                 @empty
             
                 <tr>
-                    <td>Nenhum</td>
                     <td>Nenhum</td>
                     <td>Nenhum</td>
                     <td>Nenhum</td>

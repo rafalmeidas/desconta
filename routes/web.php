@@ -40,12 +40,14 @@ Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
 
 //Rota de relatórios
 Route::group(['middleware' => ['auth'], 'namespace' => 'Painel'], function () {
-    Route::any('painel/relatorio', 'RelatorioCompraController@relatorioCompra')->name('relatorio.compra');
-    Route::any('painel/relatorio/gerar', 'RelatorioCompraController@selecionaRelatorio')->name('relatorio.gerar');
-    Route::any('painel/relatorio/compra', 'RelatorioCompraController@index')->name('index.compra');
+    
 
-    Route::any('painel/relatorio/gerar', 'RelatorioFinanceiroController@selecionaRelatorio')->name('relatorioF.gerar');
+    Route::any('painel/relatorio/gerarFinaceiro', 'RelatorioFinanceiroController@selecionaRelatorio')->name('relatorioF.gerar');
     Route::any('painel/relatorio/financeiro', 'RelatorioFinanceiroController@index')->name('index.financeiro');
+
+    Route::any('painel/relatorio', 'RelatorioCompraController@relatorioCompra')->name('relatorio.compra');
+    Route::any('painel/relatorio/gerarCompra', 'RelatorioCompraController@selecionaRelatorio')->name('relatorio.gerar');
+    Route::any('painel/relatorio/compra', 'RelatorioCompraController@index')->name('index.compra');
     
 });
 

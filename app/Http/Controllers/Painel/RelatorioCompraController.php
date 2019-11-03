@@ -31,7 +31,13 @@ class RelatorioCompraController extends Controller
     public function selecionaRelatorio(Request $request)
     {
         $dataForm = $request->except('_token');
-        $filtro = $dataForm['filtro'];
+        $filtro = isset($dataForm['filtro']) ? $dataForm['filtro'] : null;
+        
+        //Apertar F5 em um relatório já gerado em tela
+        if($filtro == null){
+            return redirect()->route('index.financeiro')->with(['error' => 'Selecione novamente um filtro para consulta e preencha os campos corretamente.']);
+        }
+        
         //dd($dataForm);
         //fazer todas validações de filtros para depois enviar para o relatório
         if ($filtro == 0) {
@@ -84,7 +90,6 @@ class RelatorioCompraController extends Controller
     public function relatorioCompra($dados, $adicional = null, $adicional1 = null)
     {
         $compra = new Compra();
-        $parcela = new Parcela();
 
         //View padrão do relatório
         $nomeView = 'relatorio.compra.relatorio-todas-compras';

@@ -25,7 +25,7 @@
                     <td>{{$dado->pessoa->nome}}</td>
                     <td>{{date( 'd/m/Y' , strtotime($dado->data_venda))}}</td>
                     <td>{{$dado->qtde_parcelas}}</td>
-                    <td>{{$dado->valor_total}}</td>
+                    <td>{{number_format($dado->valor_total, 2, ',','.')}}</td>
                     <td>{{$dado->empresa->razao_social}}</td>
                     <td>{{$dado->compra_paga}}</td>
                 </tr>

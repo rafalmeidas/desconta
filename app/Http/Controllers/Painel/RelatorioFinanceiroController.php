@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Parcela;
 use App\Models\Painel\Pessoa;
+use ArrayObject;
+use DB;
 
 class RelatorioFinanceiroController extends Controller
 {
@@ -32,11 +34,17 @@ class RelatorioFinanceiroController extends Controller
     public function selecionaRelatorio(Request $request)
     {
         $dataForm = $request->except('_token');
-        $filtro = $dataForm['filtro'];
-        //dd($dataForm);
+        $filtro = isset($dataForm['filtro']) ? $dataForm['filtro'] : null;
+
+        //Apertar F5 em um relatório já gerado em tela
+        if($filtro == null){
+            return redirect()->route('index.financeiro')->with(['error' => 'Selecione novamente um filtro para consulta e preencha os campos corretamente.']);
+        }
+
         //fazer todas validações de filtros para depois enviar para o relatório
+        
         if ($filtro == 0) {
-            return redirect()->route('index.compra')->with(['error' => 'Selecione um filtro para consulta e preencha os campos corretamente.']);
+            return redirect()->route('index.financeiro')->with(['error' => 'Selecione um filtro para consulta e preencha os campos corretamente.']);
         } elseif ($filtro == 1) {
             return $this->relatorioCompra($dataForm);
         } elseif ($filtro == 2) {
@@ -45,7 +53,7 @@ class RelatorioFinanceiroController extends Controller
                 return $this->relatorioCompra($dataForm);
             } else {
                 //redirecionar com erro
-                return redirect()->route('index.compra')->with(['error' => 'Insira a data corretamente.']);
+                return redirect()->route('index.financeiro')->with(['error' => 'Insira a data corretamente.']);
             }
         } elseif ($filtro == 3) {
             if (isset($dataForm['mes'])) {
@@ -53,28 +61,28 @@ class RelatorioFinanceiroController extends Controller
             } else {
                 //redirecionar com erro
 
-                return redirect()->route('index.compra')->with(['error' => 'Insira a data corretamente.']);
+                return redirect()->route('index.financeiro')->with(['error' => 'Insira a data corretamente.']);
             }
         } elseif ($filtro == 4) {
             if (isset($dataForm['ano'])) {
                 return $this->relatorioCompra($dataForm, $dataForm['ano']);
             } else {
                 //redirecionar com erro
-                return redirect()->route('index.compra')->with(['error' => 'Insira a data corretamente.']);
+                return redirect()->route('index.financeiro')->with(['error' => 'Insira a data corretamente.']);
             }
         } elseif ($filtro == 5) {
             if (isset($dataForm['cpf'])) {
                 return $this->relatorioCompra($dataForm, $dataForm['cpf']);
             } else {
                 //redirecionar com erro
-                return redirect()->route('index.compra')->with(['error' => 'Insira o CPF corretamente.']);
+                return redirect()->route('index.financeiro')->with(['error' => 'Insira o CPF corretamente.']);
             }
         } elseif ($filtro == 6) {
             if (isset($dataForm['datainic']) && isset($dataForm['datafin'])) {
                 return $this->relatorioCompra($dataForm, $dataForm['datainic'], $dataForm['datafin']);
             } else {
                 //redirecionar com erro
-                return redirect()->route('index.compra')->with(['error' => 'Insira as datas corretamente.']);
+                return redirect()->route('index.financeiro')->with(['error' => 'Insira as datas corretamente.']);
             }
         }
     }
@@ -99,29 +107,18 @@ class RelatorioFinanceiroController extends Controller
         switch ($tipoRelatorio) {
             case 1:
                 $titulo = 'Relatório Finaceiro (Todas)';
-                //$relatorio = $compra->where('empresa_id', auth()->user()->empresa_id)->get();
-                //dd($relatorio);
-                //Preciso acessar o id da compra consultada anteriormente
-                //$parcela = $parcela->where('compra_id', '=', $relatorio->id);
-                // -tabela compra
-                // nome cliente
-                // data_venda
-                // qtde_parcelas
-                // valor_total
-                // Paga
+                //quantidades de compras na empresa para usar no for
+                $qtdeCompras = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)->count();
 
-                // -tabela de parcela
-                // nr_parcela
-                // boleto_pago
-                // valor_parcela
-                $idEmpresa = auth()->user()->empresa_id;
-                $compra = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, ' 
-                               FROM compras, parcelas
-                               WHERE compras.empresa_id  = $idEmpresa"
-                            );
+                $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)->paginate($this->totalPage);;
 
+                    foreach($relatorio as $d){
+                        $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();//->toSql();
+                    }
+                    //dd($parcelas);
 
-                return $this->gerarPDF($nomeView, $relatorio, $parcela, $titulo, true, $download);
+                //Convertendo parcelas em objeto
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download);
                 break;
             case 2:
                 $titulo = 'Relatório de Compras (Por dia)';

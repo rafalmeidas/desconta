@@ -38,7 +38,7 @@
 
                 <td>{{$compra->qtde_parcelas}}</td>
 
-                <td>{{$compra->valor_total}}</td>
+                <td>{{number_format($compra->valor_total, 2, ',','.')}}</td>
 
                 <td>{{$compra->empresa->razao_social}}</td>
 
