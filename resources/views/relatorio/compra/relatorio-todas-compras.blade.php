@@ -22,7 +22,7 @@
                 @forelse($relatorio as $dado)
 
                 <tr>
-                    <td>{{$dado->pessoa->nome}}</td>
+                    <td>{{$dado->pessoa->nome}} {{$dado->pessoa->sobrenome}}</td>
                     <td>{{date( 'd/m/Y' , strtotime($dado->data_venda))}}</td>
                     <td>{{$dado->qtde_parcelas}}</td>
                     <td>{{number_format($dado->valor_total, 2, ',','.')}}</td>
