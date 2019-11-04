@@ -121,8 +121,11 @@ class RelatorioCompraController extends Controller
 
                 $arrayData = explode("-",$adicional);
 
-                $start = $arrayData[0].'-'.$arrayData[1].'-01'; 
-                $end = $arrayData[0].'-'.$arrayData[1].'-31';
+                //Retorna o número de dias em um mês de um calendário e ano requisitado
+                $dias = cal_days_in_month(CAL_GREGORIAN, $arrayData[1], $arrayData[0]);
+
+                $start = $arrayData[0].'-'.$arrayData[1].'-01';
+                $end = $arrayData[0].'-'.$arrayData[1].'-'.$dias;
 
                 $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                 ->whereBetween('data_venda', array($start, $end))
@@ -135,8 +138,11 @@ class RelatorioCompraController extends Controller
             
                 $arrayData = explode("-",$adicional);
             
-                $start = $arrayData[0].'-'.'01'.'-01'; 
-                $end = $arrayData[0].'-'.'12'.'-31';
+                //Retorna o número de dias em um mês de um calendário e ano requisitado
+                $dias = cal_days_in_month(CAL_GREGORIAN, $arrayData[1], $arrayData[0]);
+
+                $start = $arrayData[0].'-'.'01'.'-01';
+                $end = $arrayData[0].'-'.'12'.'-'.$dias;
             
                 $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                 ->whereBetween('data_venda', array($start, $end))
@@ -161,7 +167,7 @@ class RelatorioCompraController extends Controller
             case 6:
                 $titulo = 'Relatório de Compras (Por Intervalo de datas)';
             
-                $start = $adicional; 
+                $start = $adicional;
                 $end = $adicional1;
             
                 $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)

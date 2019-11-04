@@ -43,11 +43,21 @@
                     </select>
                 </div>
 
-                <div class="form-group col-md-3" id="div">
+                <div class="form-group col-md-2">
+                    <label for="idsituacao">Situação</label><br>
+                    <select name="situacao" class="form-control" id="idsituacao">
+                        @foreach($situacoes as $id => $nome)
+                        <option value="{{$id}}" @if($id == 1) selected @endif
+                                >{{$nome}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2" id="div">
                     
                 </div>
 
-                <div class="form-group col-md-3" id="div1">
+                <div class="form-group col-md-2" id="div1">
                     
                 </div>
 

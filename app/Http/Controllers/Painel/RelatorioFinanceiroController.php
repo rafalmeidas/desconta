@@ -7,8 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Parcela;
 use App\Models\Painel\Pessoa;
-use ArrayObject;
-use DB;
 
 class RelatorioFinanceiroController extends Controller
 {
@@ -23,12 +21,16 @@ class RelatorioFinanceiroController extends Controller
             4 => 'Ano',
             5 => 'CPF',
             6 => 'Intervalo de datas',
-            7 => 'Pagas',
-            8 => 'Em aberto',
+        ];
+
+        $situacoes = [
+            1 => 'Todos',
+            2 => 'Pagas',
+            3 => 'Em aberto',
         ];
 
         $data = date('Y-m-d');
-        return view('relatorio.financeiro.index', compact('filtros', 'data'));
+        return view('relatorio.financeiro.index', compact('filtros', 'situacoes', 'data'));
     }
 
     public function selecionaRelatorio(Request $request)
@@ -36,7 +38,7 @@ class RelatorioFinanceiroController extends Controller
         $dataForm = $request->except('_token');
         $filtro = isset($dataForm['filtro']) ? $dataForm['filtro'] : null;
 
-        //Apertar F5 em um relatório já gerado em tela
+        //Caso pertar F5 ou recarregue a pagina em um relatório já gerado em tela
         if($filtro == null){
             return redirect()->route('index.financeiro')->with(['error' => 'Selecione novamente um filtro para consulta e preencha os campos corretamente.']);
         }
@@ -107,105 +109,212 @@ class RelatorioFinanceiroController extends Controller
         switch ($tipoRelatorio) {
             case 1:
                 $titulo = 'Relatório Finaceiro (Todas)';
-                //quantidades de compras na empresa para usar no for
-                $qtdeCompras = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)->count();
 
-                $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)->paginate($this->totalPage);;
+                if($dados['situacao'] == '2'){
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('compra_paga', '=', 'S')
+                                        ->get();
+                }else if($dados['situacao'] == '3'){
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('compra_paga', '=', 'N')
+                                        ->get();
+                }else{
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)->get();
+                }
+                
+                $parcelas = null;
+                foreach($relatorio as $d){
+                    $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
+                }
 
-                    foreach($relatorio as $d){
-                        $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();//->toSql();
-                    }
-                    //dd($parcelas);
-
-                //Convertendo parcelas em objeto
-                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download);
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download);
                 break;
             case 2:
-                $titulo = 'Relatório de Compras (Por dia)';
-                $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
-                ->where('compras.data_venda', '=', $dados['data'])
-                ->paginate($this->totalPage);
-                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
+                $titulo = 'Relatório Finaceiro (Por dia)';
+
+                if($dados['situacao'] == '2'){
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('compras.data_venda', '=', $dados['data'])
+                                        ->where('compra_paga', '=', 'S')
+                                        ->get();
+                }else if($dados['situacao'] == '3'){
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('compras.data_venda', '=', $dados['data'])
+                                        ->where('compra_paga', '=', 'N')
+                                        ->get();
+                }else{
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('compras.data_venda', '=', $dados['data'])
+                                        ->get();
+                }
+
+                //definindo a variavel de parcelas
+                $parcelas = null;
+                foreach($relatorio as $d){
+                    $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
+                }
+
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download, $dados['data']);
                 break;
             case 3:
-                $titulo = 'Relatório de Compras (Por Mês)';
+                $titulo = 'Relatório Financeiro (Por Mês)';
 
                 $arrayData = explode("-", $adicional);
+                //Retorna o número de dias em um mês de um calendário e ano requisitado
+                $dias = cal_days_in_month(CAL_GREGORIAN, $arrayData[1], $arrayData[0]);
 
                 $start = $arrayData[0].'-'.$arrayData[1].'-01';
-                $end = $arrayData[0].'-'.$arrayData[1].'-31';
+                $end = $arrayData[0].'-'.$arrayData[1].'-'.$dias;
 
-                $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
-                ->whereBetween('data_venda', array($start, $end))
-                ->paginate($this->totalPage);
-                //dd($relatorio);
-                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
+                if($dados['situacao'] == '2'){
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->where('compra_paga', '=', 'S')
+                                        ->get();
+                }else if($dados['situacao'] == '3'){
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->where('compra_paga', '=', 'N')
+                                        ->get();
+                }else{
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->get();
+                }
+
+                //definindo a variavel de parcelas
+                $parcelas = null;
+                foreach ($relatorio as $d){
+                    $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
+                }
+                
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download, $start, $end);
                 break;
             case 4:
-                $titulo = 'Relatório de Compras (Por Ano)';
+                $titulo = 'Relatório Financeiro (Por Ano)';
             
                 $arrayData = explode("-", $adicional);
-            
+                
+                //Retorna o número de dias em um mês de um calendário e ano requisitado
+                $dias = cal_days_in_month(CAL_GREGORIAN, $arrayData[1], $arrayData[0]);
+
                 $start = $arrayData[0].'-'.'01'.'-01';
-                $end = $arrayData[0].'-'.'12'.'-31';
-            
-                $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
-                ->whereBetween('data_venda', array($start, $end))
-                ->paginate($this->totalPage);
-                //dd($relatorio);
-                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
+                $end = $arrayData[0].'-'.'12'.'-'.$dias;
+
+                if($dados['situacao'] == '2'){
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->where('compra_paga', '=', 'S')
+                                        ->get();
+                }else if($dados['situacao'] == '3'){
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->where('compra_paga', '=', 'N')
+                                        ->get();
+                }else{
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->get();
+                }
+                
+                //definindo a variavel de parcelas
+                $parcelas = null;
+                foreach($relatorio as $d){
+                    $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
+                }
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download, $start, $end);
                 break;
             case 5:
-                $titulo = 'Relatório de Compras (Por CPF)';
+                $titulo = 'Relatório Financeiro (Por CPF)';
 
                 //consulta da pessoa por cpf
                 $pessoa = new Pessoa();
                 $pessoa = $pessoa->where('cpf', '=', $adicional)->first();
 
-
                 //dd($pessoa);
-                $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
-                ->where('pessoa_id', '=', $pessoa->id)
-                ->paginate($this->totalPage);
-                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
+                if($dados['situacao'] == '2'){
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('pessoa_id', '=', $pessoa->id)
+                                        ->where('compra_paga', '=', 'S')
+                                        ->get();
+                }else if($dados['situacao'] == '3'){
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('pessoa_id', '=', $pessoa->id)
+                                        ->where('compra_paga', '=', 'N')
+                                        ->get();
+                }else{
+                    $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                        ->where('pessoa_id', '=', $pessoa->id)->get();
+                }
+
+                //definindo a variavel de parcelas
+                $parcelas = null;
+                foreach($relatorio as $d){
+                    $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
+                }
+
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download);
                 break;
             case 6:
-                $titulo = 'Relatório de Compras (Por Intervalo de datas)';
+                $titulo = 'Relatório Financeiro (Por Intervalo de datas)';
             
                 $start = $adicional;
                 $end = $adicional1;
-            
-                $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
-                ->whereBetween('data_venda', array($start, $end))
-                ->paginate($this->totalPage);
-                //dd($relatorio);
-                return $this->gerarPDF($nomeView, $relatorio, $titulo, true, $download);
+
+                if($dados['situacao'] == '2'){
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->where('compra_paga', '=', 'S')
+                                        ->get();
+                }else if($dados['situacao'] == '3'){
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->where('compra_paga', '=', 'N')
+                                        ->get();
+                }else{
+                    $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
+                                        ->whereBetween('data_venda', array($start, $end))
+                                        ->get();
+                }
+                
+                $parcelas = null;
+                foreach($relatorio as $d){
+                    $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
+                }
+
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download, $start, $end);
                 break;
 
         }
     }
 
-    public function gerarPDF($nomeView, $dados, $dados1, $titulo, $paisagem = false, $download = false)
+    public function gerarPDF($nomeView, $dados, $dados1, $titulo, $paisagem = false, $download = false, $data = false, $data1 = false)
     {
         $relatorio = $dados;
         $parcela = $dados1;
-        //dd($relatorio);
-        //dd($relatorio);
         $titulo = $titulo;
+        $dataAtual = date('Y-m-d');
+        if($data == false){
+            $data = $dataAtual;
+        }
+
+        if($data1 == false){
+            $data1 = $dataAtual;
+        }
 
         if ($paisagem == true && $download == true) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
                 ->setPaper('a4', 'landscape')
                 ->download($titulo.".pdf");
         } elseif ($paisagem == true && $download == false) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
                 ->setPaper('a4', 'landscape')
                 ->stream($titulo.".pdf");
         } elseif ($download == true && $paisagem == false) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
                 ->download($titulo.".pdf");
         } elseif ($download == false && $paisagem == false) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
                 ->stream($titulo.".pdf");
         }
     }
