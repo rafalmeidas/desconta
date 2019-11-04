@@ -9,6 +9,7 @@ use App\User;
 use App\Models\Painel\Pessoa;
 use App\Models\Painel\Estado;
 use App\Models\Painel\Cidade;
+use App\Models\Painel\Desconto;
 use App\Models\Painel\Empresa;
 use App\Models\Painel\Parcela;
 use DB;
@@ -22,8 +23,9 @@ class ApiController extends Controller
     private $estado;
     private $empresa;
     private $parcela;
+    private $desconto; 
 
-    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado, Empresa $empresa, Parcela $parcela)
+    public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado, Empresa $empresa, Parcela $parcela, Desconto $desconto)
     {
         $this->compra = $compra;
         $this->user = $user;
@@ -32,6 +34,7 @@ class ApiController extends Controller
         $this->estado = $estado;
         $this->empresa = $empresa;
         $this->parcela = $parcela;
+        $this->desconto = $desconto;
     }
 
     public function getUsuarioComUid($uid)
@@ -91,8 +94,9 @@ class ApiController extends Controller
         $pessoa->rua = $params['rua'];
         $pessoa->bairro = $params['bairro'];
         $pessoa->numero = $params['numero'];
-        $pessoa->cep = $params['cep'];        
+        $pessoa->cep = $params['cep'];
         $pessoa->complemento = $params['complemento'];
+        $pessoa->cidade_id = $params['cidade_id'];
         $pessoa->save();
 
         $usuario = new User;
@@ -199,11 +203,12 @@ class ApiController extends Controller
     public function GetCompras($idUsuario, $idEmpresa)
     {
 
-        $compra = DB::select("SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia
+        $compra = DB::select("SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia, compra_paga
                                FROM compras, empresas
                                WHERE compras.empresa_id  = empresas.id
                                AND empresas.id = $idEmpresa
-                               AND pessoa_id = $idUsuario;"
+                               AND pessoa_id = $idUsuario
+                               ORDER BY compra_paga = 'S', id;"
                             );
 
         return  response()->json($compra);
@@ -215,28 +220,116 @@ class ApiController extends Controller
         $parcela = DB::select("SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago
                                 FROM public.parcelas
                                 where compra_id = $idCompra
-                                ORDER BY boleto_pago = 'S';"
+                                ORDER BY boleto_pago = 'S', nr_parcela;"
                             );
         
 
         return  response()->json($parcela);
     }
 
-    //compra = id, data_venda, qtde_parcelas, valor_total, 
-    //parcelas = id, nr_parcela, nr_boleto, valor_parcela
-    //empresa_id(id, razao social, nome fantasia, cnpj, telefone,  endereço completo)
-
-
-    public function PagarParcela($idParcela){
+    public function PagarParcela($idParcela, Request $request){
         $parcela = Parcela::find($idParcela);
-       // $params = $request->all();
-        $parcela->boleto_pago = 'S'; //$params['boleto_pago'];
+        $params = $request->all();
+        $parcela->boleto_pago = $params['boleto_pago'];
+        $parcela->save();
 
-        $retorno = $parcela->save();
-       
-        if($retorno){
-            return response('Compra paga com sucesso ', 200)
-            ->header('Content-Type', 'text/plain');
+        $qtdeParcelasPagas = DB::select("SELECT COUNT(parcelas.id)
+                                           FROM public.parcelas
+                                          INNER JOIN public.compras on parcelas.compra_id = compras.id
+                                          where parcelas.boleto_pago = 'S' and compras.id = $parcela->compra_id;" 
+                                        );
+        $qtdeParcelasPagas = $qtdeParcelasPagas['0'];
+        $qtdeParcelasPagas =  $qtdeParcelasPagas->count;
+
+        $compra = Compra::find($parcela->compra_id);
+
+        if($compra->qtde_parcelas == $qtdeParcelasPagas){
+           $compra->compra_paga = 'S';
+           $compra->save();
+
+           $this->empresa = Empresa::find($compra->empresa_id);
+           $this->pessoa = Pessoa::find($compra->pessoa_id);
+
+            $this->desconto->pessoa_id = $compra->pessoa_id;
+            $this->desconto->cpf = $this->pessoa->cpf;
+            $this->desconto->compra_id = $compra->id;
+            $this->desconto->valor_compra = $compra->valor_total;
+            $this->desconto->valor_desconto = ($this->empresa->porcentagem_desc * 0.01) * $compra->valor_total;
+
+            $this->desconto->save();
+            
         }
+
+        return response('Compra paga com sucesso ', 200);
+    }
+
+    public function GetCidade($id){
+        $cidade = Cidade::find($id);
+
+        return  response()->json($cidade);
+    }
+
+    public function GetCidades($idEstado){
+        $cidade = DB::select("SELECT id, nome, ibge_code, estado_id, created_at, updated_at
+                                FROM public.cidades
+                                WHERE estado_id = $idEstado;"
+                            );
+
+        return  response()->json($cidade);
+    }
+
+    public function GetCidadeEstado($idPessoa){
+      
+
+        $query = DB::select("SELECT cidades.nome, estados.sigla
+                                   FROM estados
+                                   INNER JOIN cidades on estados.id = cidades.estado_id
+                                   INNER JOIN pessoas on cidades.id = pessoas.cidade_id
+                                   WHERE pessoas.id = $idPessoa;"
+                               );
+
+        return  response()->json($query[0]);
+    }
+
+    public function AtualizarPessoa($idPessoa, Request $request){
+        $params = $request->all();
+
+        $this->pessoa = Pessoa::find($idPessoa);
+
+        switch($params['campo']){
+            case 'nome' :
+                $this->pessoa->nome = $params['valorNovo'];
+                break;
+            case 'sobrenome' :
+                $this->pessoa->sobrenome = $params['valorNovo'];
+                break;
+            case 'tel_1' :
+                $this->pessoa->tel_1 = $params['valorNovo'];
+                break;
+            case 'tel_2' :
+                $this->pessoa->tel_2 = $params['valorNovo'];
+                break;
+        }
+
+        $this->pessoa->save();
+        
+        return  response()->json($this->pessoa);
+    }
+
+    public function AtualizarEndereco($idPessoa, Request $request){
+        $params = $request->all();
+
+        $this->pessoa = Pessoa::find($idPessoa);
+
+        $this->pessoa->rua = $params['rua'];
+        $this->pessoa->bairro = $params['bairro'];
+        $this->pessoa->numero = $params['numero'];
+        $this->pessoa->cep = $params['cep'];
+        $this->pessoa->complemento = $params['complemento'];
+        $this->pessoa->cidade_id = $params['cidade_id'];
+
+        $this->pessoa->save();
+
+        return  response()->json($this->pessoa);
     }
 }
