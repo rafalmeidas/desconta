@@ -239,6 +239,7 @@
                 "shasum": ""
             },
             "require": {
+                "ext-gd": "*",
                 "ext-dom": "*",
                 "ext-mbstring": "*",
                 "phenx/php-font-lib": "0.5.*",
