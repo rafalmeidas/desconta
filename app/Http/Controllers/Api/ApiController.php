@@ -23,7 +23,7 @@ class ApiController extends Controller
     private $estado;
     private $empresa;
     private $parcela;
-    private $desconto; 
+    private $desconto;
 
     public function __construct(Compra $compra, User $user, Pessoa $pessoa, Cidade $cidade, Estado $estado, Empresa $empresa, Parcela $parcela, Desconto $desconto)
     {
@@ -39,10 +39,9 @@ class ApiController extends Controller
 
     public function getUsuarioComUid($uid)
     {
-        $usuario = $this->user->where('uid_firebase' ,$uid)->first();
-        if( $usuario != null)
-        {
-            $pessoa = $this->pessoa->find($usuario->pessoa_id); 
+        $usuario = $this->user->where('uid_firebase', $uid)->first();
+        if ($usuario != null) {
+            $pessoa = $this->pessoa->find($usuario->pessoa_id);
             return ApiController::retornoUsuario($usuario, $pessoa);
         }
         return ApiController::retornoUsuario(new User, new Pessoa);
@@ -50,30 +49,30 @@ class ApiController extends Controller
 
     public function getUsuarioComCpf($cpf)
     {
-        $pessoa = $this->pessoa->where('cpf' ,$cpf)->first();
-        if( $pessoa != null)
-        {
-            $usuario = $this->user->where('pessoa_id' ,$pessoa->id)->first();
-            
-            if($usuario != null) return response('Erro ao tentar criar novo usuário com o CPF fornecido', 417)
-            ->header('Content-Type', 'text/plain');
+        $pessoa = $this->pessoa->where('cpf', $cpf)->first();
+        if ($pessoa != null) {
+            $usuario = $this->user->where('pessoa_id', $pessoa->id)->first();
+
+            if ($usuario != null) return response('Erro ao tentar criar novo usuário com o CPF fornecido', 417)
+                ->header('Content-Type', 'text/plain');
 
             return ApiController::retornoUsuario(new User, $pessoa);
         }
         return ApiController::retornoUsuario(new User, new Pessoa);
     }
 
-    public function setUsuario($email, $uid, Request $request){
+    public function setUsuario($email, $uid, Request $request)
+    {
         $pessoa = new Pessoa;
         $params = $request->all();
         $pessoa = $pessoa->insert($params);
 
-        $pessoa = $this->pessoa->where('cpf' ,$params['cpf'])->first();
+        $pessoa = $this->pessoa->where('cpf', $params['cpf'])->first();
 
         $usuario = new User;
         $usuario->email = $email;
         $usuario->uid_firebase = $uid;
-        $usuario->tipo_login = "Usuário"; 
+        $usuario->tipo_login = "Usuário";
         $usuario->status = true;
         $usuario->pessoa_id = $pessoa->id;
         $usuario->email_verified_at = null;
@@ -82,7 +81,8 @@ class ApiController extends Controller
         return ApiController::retornoUsuario($usuario, $pessoa);
     }
 
-    public function UpUsuario ($id, $email, $uid, Request $request){
+    public function UpUsuario($id, $email, $uid, Request $request)
+    {
         $params = $request->all();
         $pessoa = Pessoa::find($id);
         $pessoa->nome = $params['nome'];
@@ -102,7 +102,7 @@ class ApiController extends Controller
         $usuario = new User;
         $usuario->email = $email;
         $usuario->uid_firebase = $uid;
-        $usuario->tipo_login = "Usuário"; 
+        $usuario->tipo_login = "Usuário";
         $usuario->status = true;
         $usuario->pessoa_id = $id;
         $usuario->email_verified_at = null;
@@ -111,56 +111,57 @@ class ApiController extends Controller
         return ApiController::retornoUsuario($usuario, $pessoa);
     }
 
-    public function retornoUsuario(User $modelUser, Pessoa $modelPessoa){
+    public function retornoUsuario(User $modelUser, Pessoa $modelPessoa)
+    {
         $modelUser = json_decode($modelUser);
         $modelPessoa = json_decode($modelPessoa);
 
         $retorno = "";
-        if($modelUser != null){
+        if ($modelUser != null) {
             $retorno = '{
-                "id": "' .$modelUser->id. '",
-                "email": "' .$modelUser->email. '",
-                "email_verified_at": "' .$modelUser->email_verified_at. '",';
-        }else{
+                "id": "' . $modelUser->id . '",
+                "email": "' . $modelUser->email . '",
+                "email_verified_at": "' . $modelUser->email_verified_at . '",';
+        } else {
             $retorno = '{
                 "id": "",
                 "email": "",
                 "email_verified_at": "",';
         }
-        if($modelPessoa != null) {
+        if ($modelPessoa != null) {
 
             $cidade = $this->cidade->find($modelPessoa->cidade_id);
             $estado = null;
-           
+
             if ($cidade != null) {
                 $estado = $this->estado->find($cidade->estado_id);
             }
 
             $retorno .= '"pessoa": {
-                "id": "' .$modelPessoa->id. '",
-                "nome": "' .$modelPessoa->nome. '",
-                    "sobrenome": "' .$modelPessoa->sobrenome. '",
-                    "cpf": "' .$modelPessoa->cpf. '",
-                    "rg": "' .$modelPessoa->rg. '",
-                    "data_nasc": "' .$modelPessoa->data_nasc. '",
-                    "tel_1": "' .$modelPessoa->tel_1. '",
-                    "tel_2": "' .$modelPessoa->tel_2. '",
-                    "rua": "' .$modelPessoa->rua. '",
-                    "bairro": "' .$modelPessoa->bairro. '",
-                    "numero": "' .$modelPessoa->numero. '",
-                    "cep": "' .$modelPessoa->cep. '",
-                    "complemento": "' .$modelPessoa->complemento. '"';
-                    if ($cidade == null){
-                        $retorno .= ',
+                "id": "' . $modelPessoa->id . '",
+                "nome": "' . $modelPessoa->nome . '",
+                    "sobrenome": "' . $modelPessoa->sobrenome . '",
+                    "cpf": "' . $modelPessoa->cpf . '",
+                    "rg": "' . $modelPessoa->rg . '",
+                    "data_nasc": "' . $modelPessoa->data_nasc . '",
+                    "tel_1": "' . $modelPessoa->tel_1 . '",
+                    "tel_2": "' . $modelPessoa->tel_2 . '",
+                    "rua": "' . $modelPessoa->rua . '",
+                    "bairro": "' . $modelPessoa->bairro . '",
+                    "numero": "' . $modelPessoa->numero . '",
+                    "cep": "' . $modelPessoa->cep . '",
+                    "complemento": "' . $modelPessoa->complemento . '"';
+            if ($cidade == null) {
+                $retorno .= ',
                         " cidade": "",
                         "estado": ""';
-                    }else{
-                    $retorno .= ',
-                    "cidade": "' .$cidade->nome. '",
-                    "estado": "' .$estado->sigla. '"';
-                    }
-                $retorno .= '}';
-        }else{
+            } else {
+                $retorno .= ',
+                    "cidade": "' . $cidade->nome . '",
+                    "estado": "' . $estado->sigla . '"';
+            }
+            $retorno .= '}';
+        } else {
             $retorno .= '"pessoa": {
                 "id": "",
                 "nome": "",
@@ -186,16 +187,18 @@ class ApiController extends Controller
     }
 
 
-    public function GetEmpresas($id){
+    public function GetEmpresas($id)
+    {
 
-        $empresa = DB::select("SELECT empresas.id, empresas.razao_social, empresas.nome_fantasia, empresas.cnpj, empresas.inscricao_est,
+        $empresa = DB::select(
+            "SELECT empresas.id, empresas.razao_social, empresas.nome_fantasia, empresas.cnpj, empresas.inscricao_est,
                                     empresas.porcentagem_desc, empresas.tel, empresas.rua, empresas.bairro, empresas.numero, empresas.cep, 
                                     empresas.complemento, empresas.cidade_id, empresas.status
                                 FROM empresas, compras
                                 WHERE compras.pessoa_id = $id
                                 AND empresas.id = compras.empresa_id
                                 GROUP BY empresas.id; "
-                             );
+        );
 
         return  response()->json($empresa);
     }
@@ -203,13 +206,14 @@ class ApiController extends Controller
     public function GetCompras($idUsuario, $idEmpresa)
     {
 
-        $compra = DB::select("SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia, compra_paga
+        $compra = DB::select(
+            "SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia, compra_paga
                                FROM compras, empresas
                                WHERE compras.empresa_id  = empresas.id
                                AND empresas.id = $idEmpresa
                                AND pessoa_id = $idUsuario
                                ORDER BY compra_paga = 'S', id;"
-                            );
+        );
 
         return  response()->json($compra);
     }
@@ -217,38 +221,41 @@ class ApiController extends Controller
     public function GetParcelas($idCompra)
     {
 
-        $parcela = DB::select("SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago, data_vencimento
+        $parcela = DB::select(
+            "SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago, data_vencimento
                                 FROM public.parcelas
                                 where compra_id = $idCompra
                                 ORDER BY boleto_pago = 'S', nr_parcela;"
-                            );
-        
+        );
+
 
         return  response()->json($parcela);
     }
 
-    public function PagarParcela($idParcela, Request $request){
+    public function PagarParcela($idParcela, Request $request)
+    {
         $parcela = Parcela::find($idParcela);
         $params = $request->all();
         $parcela->boleto_pago = $params['boleto_pago'];
         $parcela->save();
 
-        $qtdeParcelasPagas = DB::select("SELECT COUNT(parcelas.id)
+        $qtdeParcelasPagas = DB::select(
+            "SELECT COUNT(parcelas.id)
                                            FROM public.parcelas
                                           INNER JOIN public.compras on parcelas.compra_id = compras.id
-                                          where parcelas.boleto_pago = 'S' and compras.id = $parcela->compra_id;" 
-                                        );
+                                          where parcelas.boleto_pago = 'S' and compras.id = $parcela->compra_id;"
+        );
         $qtdeParcelasPagas = $qtdeParcelasPagas['0'];
         $qtdeParcelasPagas =  $qtdeParcelasPagas->count;
 
         $compra = Compra::find($parcela->compra_id);
 
-        if($compra->qtde_parcelas == $qtdeParcelasPagas){
-           $compra->compra_paga = 'S';
-           $compra->save();
+        if ($compra->qtde_parcelas == $qtdeParcelasPagas) {
+            $compra->compra_paga = 'S';
+            $compra->save();
 
-           $this->empresa = Empresa::find($compra->empresa_id);
-           $this->pessoa = Pessoa::find($compra->pessoa_id);
+            $this->empresa = Empresa::find($compra->empresa_id);
+            $this->pessoa = Pessoa::find($compra->pessoa_id);
 
             $this->desconto->pessoa_id = $compra->pessoa_id;
             $this->desconto->cpf = $this->pessoa->cpf;
@@ -257,66 +264,72 @@ class ApiController extends Controller
             $this->desconto->valor_desconto = ($this->empresa->porcentagem_desc * 0.01) * $compra->valor_total;
 
             $this->desconto->save();
-            
         }
 
         return response('Compra paga com sucesso ', 200);
     }
 
-    public function GetCidade($id){
+    public function GetCidade($id)
+    {
         $cidade = Cidade::find($id);
 
         return  response()->json($cidade);
     }
 
-    public function GetCidades($idEstado){
-        $cidade = DB::select("SELECT id, nome, ibge_code, estado_id, created_at, updated_at
+    public function GetCidades($idEstado)
+    {
+        $cidade = DB::select(
+            "SELECT id, nome, ibge_code, estado_id, created_at, updated_at
                                 FROM public.cidades
                                 WHERE estado_id = $idEstado;"
-                            );
+        );
 
         return  response()->json($cidade);
     }
 
-    public function GetCidadeEstado($idPessoa){
-      
+    public function GetCidadeEstado($idPessoa)
+    {
 
-        $query = DB::select("SELECT cidades.nome, estados.sigla
+
+        $query = DB::select(
+            "SELECT cidades.nome, estados.sigla
                                    FROM estados
                                    INNER JOIN cidades on estados.id = cidades.estado_id
                                    INNER JOIN pessoas on cidades.id = pessoas.cidade_id
                                    WHERE pessoas.id = $idPessoa;"
-                               );
+        );
 
         return  response()->json($query[0]);
     }
 
-    public function AtualizarPessoa($idPessoa, Request $request){
+    public function AtualizarPessoa($idPessoa, Request $request)
+    {
         $params = $request->all();
 
         $this->pessoa = Pessoa::find($idPessoa);
 
-        switch($params['campo']){
-            case 'nome' :
+        switch ($params['campo']) {
+            case 'nome':
                 $this->pessoa->nome = $params['valorNovo'];
                 break;
-            case 'sobrenome' :
+            case 'sobrenome':
                 $this->pessoa->sobrenome = $params['valorNovo'];
                 break;
-            case 'tel_1' :
+            case 'tel_1':
                 $this->pessoa->tel_1 = $params['valorNovo'];
                 break;
-            case 'tel_2' :
+            case 'tel_2':
                 $this->pessoa->tel_2 = $params['valorNovo'];
                 break;
         }
 
         $this->pessoa->save();
-        
+
         return  response()->json($this->pessoa);
     }
 
-    public function AtualizarEndereco($idPessoa, Request $request){
+    public function AtualizarEndereco($idPessoa, Request $request)
+    {
         $params = $request->all();
 
         $this->pessoa = Pessoa::find($idPessoa);
@@ -331,5 +344,32 @@ class ApiController extends Controller
         $this->pessoa->save();
 
         return  response()->json($this->pessoa);
+    }
+
+    public function GerarBoleto($idParcela)
+    {
+        $this->parcela = Parcela::find($idParcela);
+
+        $nr_boleto = $this->gerarNumBoleto();
+
+        $this->parcela->nr_boleto = $nr_boleto;
+
+        $this->parcela->save();
+
+        return  response()->json($this->parcela);     
+    }
+
+    public function gerarNumBoleto()
+    {
+        $Caracteres = '0123456789';
+        $QuantidadeCaracteres = strlen($Caracteres);
+        $QuantidadeCaracteres--;
+        $numBoleto = null;
+        for ($x = 1; $x <= 30; $x++) {
+            $Posicao = rand(0, $QuantidadeCaracteres);
+            $numBoleto .= substr($Caracteres, $Posicao, 1);
+        }
+
+        return $numBoleto;
     }
 }
