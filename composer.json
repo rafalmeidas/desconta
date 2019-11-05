@@ -14,7 +14,8 @@
         "intervention/image": "^2.5",
         "jeroennoten/laravel-adminlte": "^1.26",
         "laravel/framework": "5.8.*",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "gd": "*"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
