@@ -142,16 +142,6 @@ class CompraController extends Controller
                     'compra_id'  => $insert->id //Pega o id da ultima compra
                 );
 
-                //Datas de vencimento
-                // $arrayData = explode("-", $dataVencimento);
-
-                // //validar se chegar em 13 virar 01 navamente
-                // if($arrayData[1] == '13'){
-                //     $arrayData[1] = '01';
-                // }
-
-                // dd($arrayData[1]);
-               
                 $mes = 01;
                 $arrayData = explode('-', $dataVencimento); // Divide a data digitada em 3 variáveis.
                 
@@ -163,7 +153,6 @@ class CompraController extends Controller
                 }
 
                 $dataVencimento = $arrayData[0].'-'.$arrayData[1] .'-10';
-                //echo $dataVencimento;
 
                 $insertParcela = $this->parcela->create($dataParcela);
                 if ($insertParcela) {
