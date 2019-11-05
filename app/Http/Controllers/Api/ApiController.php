@@ -217,7 +217,7 @@ class ApiController extends Controller
     public function GetParcelas($idCompra)
     {
 
-        $parcela = DB::select("SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago
+        $parcela = DB::select("SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago, data_vencimento
                                 FROM public.parcelas
                                 where compra_id = $idCompra
                                 ORDER BY boleto_pago = 'S', nr_parcela;"
