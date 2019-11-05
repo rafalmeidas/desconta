@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Painel\Empresa;
 use App\Models\Painel\Compra;
 use App\Models\Painel\Desconto;
 
@@ -28,6 +29,15 @@ class AdminController extends Controller {
         }
 
         return view('admin.home.index', compact('titulo', 'qtdeCompras', 'qtdeDescontos'));
+    }
+
+    public function showEmpresa(){
+        $empresa = new Empresa();
+        $empresa = $empresa->find(auth()->user()->empresa_id);
+
+        $titulo = "Empresa";
+
+        return view('painel.empresa.show', compact('titulo', 'empresa'));
     }
 
 }

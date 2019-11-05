@@ -17,7 +17,7 @@
     <div class="icon">
         <i class="fas fa-building"></i>
     </div>
-    <a href="#" class="small-box-footer">Perfil <i class="fa fa-arrow-circle-right"></i></a>
+    <a href="{{route('admin.empresa')}}" class="small-box-footer">Empresa <i class="fa fa-arrow-circle-right"></i></a>
 </div>
 <div class="row">
         <div class="col-md-6 col-sm-6 col-xs-12">

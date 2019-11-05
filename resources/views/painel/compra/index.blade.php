@@ -4,8 +4,9 @@
 @section('title', 'Compra')
 
 @section('content_header')
-<h1 class="title-pg">{{$titulo}}</h1>
-
+<h1 class="title-pg">
+<a href="{{route('admin.home')}}"><span class="fas fa-backward"></span></a>
+ {{$titulo}}</h1>
 <ol class="breadcrumb">
     <li><a href="">Home</a></li>
     <li><a href="">Cadastro</a></li>

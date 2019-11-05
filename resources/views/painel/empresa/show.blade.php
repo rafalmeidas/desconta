@@ -8,8 +8,6 @@
 
 <ol class="breadcrumb">
     <li><a href="">Home</a></li>
-    <li><a href="">Cadastro</a></li>
-    <li><a href="">Empresa</a></li>
     <li><a href="">Ver Empresa</a></li>
 </ol>
 @stop
@@ -19,7 +17,7 @@
 <div class="box">
     <div class="box-body">
         <h1 class="title-pg">
-            <a href="{{route('empresa.index')}}"><span class="fas fa-backward"></span></a>
+            <a href="{{route('admin.home')}}"><span class="fas fa-backward"></span></a>
             Razão Social: <b>{{$empresa->razao_social}}</b>
         </h1>
 
@@ -46,11 +44,6 @@
             </button>
         </div>
         @endif
-        <form method="POST" action="{{route('empresa.destroy',$empresa->id)}}">
-            {{ csrf_field() }}
-            {{ method_field('DELETE') }}
-            <input  type="submit" value="Deletar {{$empresa->nome}}" class="btn btn-danger" title="Deletar">
-        </form>
     </div>
 </div>
 

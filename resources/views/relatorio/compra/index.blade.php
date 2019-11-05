@@ -7,7 +7,7 @@
 
 <h1 class="title-pg">
         
-    <a href="{{route('home')}}"><span class="fas fa-backward"></span></a>
+    <a href="{{route('admin.home')}}"><span class="fas fa-backward"></span></a>
     Relatório de Compra</h1>
 
 <ol class="breadcrumb">
