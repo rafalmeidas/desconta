@@ -23,9 +23,11 @@ class AdminController extends Controller {
         
         //Calculando os descontos
         $qtdeDescontos = null;
-        foreach($query as $q){
-            foreach($q as $des)
-            $qtdeDescontos += (int) $des->valor_desconto;
+        if($qtdeCompras != null){
+            foreach($query as $q){
+                foreach($q as $des)
+                $qtdeDescontos += (double) $des->valor_desconto;
+            }
         }
 
         return view('admin.home.index', compact('titulo', 'qtdeCompras', 'qtdeDescontos'));

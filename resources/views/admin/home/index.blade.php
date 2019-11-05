@@ -27,7 +27,7 @@
         
                     <div class="info-box-content">
                       <span class="info-box-text">Compras</span>
-                        <span class="info-box-number">{{$qtdeCompras}}</span>
+                        <span class="info-box-number">{{isset($qtdeCompras) ? $qtdeCompras : 0 }}</span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
@@ -39,7 +39,7 @@
         
                     <div class="info-box-content">
                       <span class="info-box-text">Cashback Gerado</span>
-                        <span class="info-box-number">{{number_format($qtdeDescontos, 2, ',','.')}}</span>
+                        <span class="info-box-number">{{isset($qtdeDescontos) ? number_format($qtdeDescontos, 2, ',','.') : number_format(0, 2, ',','.')}}</span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>
