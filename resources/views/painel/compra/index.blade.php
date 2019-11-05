@@ -33,9 +33,9 @@
             </tr>
             @foreach($compras as $compra)
             <tr>
-            <td>{{$compra->pessoa->nome}} {{$compra->pessoa->sobrenome}}</td>
+                <td>{{$compra->pessoa->nome}} {{$compra->pessoa->sobrenome}}</td>
                 
-                <td>{{date( 'd/m/Y' , strtotime($compra->data_venda))}}</td>
+                <td>{{date( 'd/m/Y', strtotime($compra->data_venda))}}</td>
 
                 <td>{{$compra->qtde_parcelas}}</td>
 

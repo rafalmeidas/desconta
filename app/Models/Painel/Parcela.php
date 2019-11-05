@@ -11,6 +11,7 @@ class Parcela extends Model
         'nr_boleto',
         'boleto_pago',
         'valor_parcela',
+        'data_vencimento',
         'compra_id'
     ];
 

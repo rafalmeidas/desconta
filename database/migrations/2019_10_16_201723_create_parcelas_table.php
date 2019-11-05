@@ -12,9 +12,10 @@ class CreateParcelasTable extends Migration
         Schema::create('parcelas', function (Blueprint $table) {
             $table->bigIncrements('id'); 
             $table->integer('nr_parcela');
-            $table->string('nr_boleto');
+            $table->string('nr_boleto')->nullable();
             $table->string('boleto_pago', 1);
             $table->double('valor_parcela', 8, 2);
+            $table->date('data_vencimento');
             $table->integer('compra_id')->unsigned()->default(0);
             $table->foreign('compra_id')
                     ->references('id')

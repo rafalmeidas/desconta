@@ -38,7 +38,7 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th>Nº Parcela</th>
-                                        <th>Nº Boleto</th>
+                                        <th>Dt Vencimento</th>
                                         <th>Boleto Pago</th>
                                         <th>Valor Parcela</th>
                                     </tr>
@@ -47,7 +47,7 @@
                                             @if($p->compra_id == $dado->id){
                                                 <tr>
                                                     <td>{{$p->nr_parcela}}</td>
-                                                    <td>{{$p->nr_boleto}}</td>
+                                                    <td>{{date( 'd/m/Y' , strtotime($p->data_vencimento))}}</td>
                                                     <td>{{$p->boleto_pago}}</td>
                                                     <td>{{number_format($p->valor_parcela, 2, ',','.')}}</td>
                                                 </tr>

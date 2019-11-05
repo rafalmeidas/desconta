@@ -77,12 +77,12 @@ class CompraController extends Controller
             //Validação de conta paga
             if ($dataForm['qtde_parcelas'] == 1) {
                 $dataForm['compra_paga'] = (!isset($dataForm['compra_paga'])) ? 'S'  : 'S';
-                if(isset($dataForm['compra_paga'])){
+                if (isset($dataForm['compra_paga'])) {
                     $insert = $this->compra->create($dataForm);
                 }
-            }else{
+            } else {
                 $dataForm['compra_paga'] = (!isset($dataForm['compra_paga'])) ? 'N'  : 'N';
-                if(isset($dataForm['compra_paga'])){
+                if (isset($dataForm['compra_paga'])) {
                     $insert = $this->compra->create($dataForm);
                 }
             }
@@ -103,12 +103,14 @@ class CompraController extends Controller
             );
 
             $numBoleto = $this->gerarNumBoleto();
+            $dataVencimento = date('Y-m-d');
 
             $dataParcela = array(
                 'nr_parcela' => 1,
                 'nr_boleto'  => $numBoleto,
                 'boleto_pago' => 'S',
                 'valor_parcela'  => $dataForm['valor_total'],
+                'data_vencimento' => $dataVencimento,
                 'compra_id'  => $insert->id //Pega o id da ultima compra
             );
             $insertDesc = $this->desconto->create($dataDesc);
@@ -121,21 +123,48 @@ class CompraController extends Controller
         }
 
         if ($dataForm['qtde_parcelas'] > 1) {
-
-
             $valorParcela = ($dataForm['valor_total'] / $dataForm['qtde_parcelas']);
 
             for ($i = 0; $i < $dataForm['qtde_parcelas']; $i++) {
                 //gerar o número de boleto
-                $numBoleto = $this->gerarNumBoleto();
+                //$numBoleto = $this->gerarNumBoleto();
 
+                //Primeiro data do boleto
+                if(isset($dataVencimento) == null){
+                    $dataVencimento = date('Y-m-d');
+                }
+                
                 $dataParcela = array(
                     'nr_parcela' => $i + 1,
-                    'nr_boleto'  => $numBoleto,
                     'boleto_pago' => 'N',
                     'valor_parcela'  => $valorParcela,
+                    'data_vencimento' => $dataVencimento,
                     'compra_id'  => $insert->id //Pega o id da ultima compra
                 );
+
+                //Datas de vencimento
+                // $arrayData = explode("-", $dataVencimento);
+
+                // //validar se chegar em 13 virar 01 navamente
+                // if($arrayData[1] == '13'){
+                //     $arrayData[1] = '01';
+                // }
+
+                // dd($arrayData[1]);
+               
+                $mes = 01;
+                $arrayData = explode('-', $dataVencimento); // Divide a data digitada em 3 variáveis.
+                
+                $arrayData[1] += $mes;
+
+                if($arrayData[1] == '13'){
+                    $arrayData[1] = '01';
+                    $arrayData[0] +=  1;
+                }
+
+                $dataVencimento = $arrayData[0].'-'.$arrayData[1] .'-10';
+                //echo $dataVencimento;
+
                 $insertParcela = $this->parcela->create($dataParcela);
                 if ($insertParcela) {
                     DB::commit();
@@ -154,7 +183,8 @@ class CompraController extends Controller
             return redirect()->route('compra.index')->with('success', 'Compra efetuada com sucesso!');
         } else {
             DB::rollBack();
-            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');;
+            return redirect()->route('compra.create-compra')->with('error', 'Não foi possível efetuar a compra');
+            ;
         }
     }
 
@@ -209,16 +239,16 @@ class CompraController extends Controller
     public function xml(XmlFormRequest $request, Pessoa $pessoa)
     {
         $dataForm =  $request->only('xml');
-        //dd($dataForm);
+
         $xml = file_get_contents($dataForm['xml']);
         $xml = simplexml_load_string($xml);
 
         $nf = $xml->NFe->infNFe->dest;
         $cpf = (string) $xml->NFe->infNFe->dest->CPF;
-        //dd($cpf);
+
         $cpf = $this->consultarPessoa($cpf);
         $pessoa = (object) $cpf;
-        //dd($cpf);
+
         if (isset($cpf) != null) {
             $titulo = 'Cadastro de Compra';
             return view('painel.compra.create-edit', compact('titulo', 'pessoa'));
@@ -255,7 +285,8 @@ class CompraController extends Controller
                 $cpf = $this->consultarPessoa($insert->cpf);
                 $pessoa = (object) $cpf;
                 $titulo = 'Cadastro de Compra';
-                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);;
+                return view('painel.compra.create-edit', compact('titulo', 'pessoa'))->with(['success' => 'Cliente cadastrado com sucesso']);
+                ;
             } else {
                 return redirect()->back()->with(['errors' => 'Falha ao cadastrar o cliente']);
             }
