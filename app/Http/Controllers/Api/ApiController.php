@@ -239,12 +239,11 @@ class ApiController extends Controller
         $parcela->boleto_pago = $params['boleto_pago'];
         $parcela->save();
 
-        $qtdeParcelasPagas = DB::select(
-            "SELECT COUNT(parcelas.id)
-                                           FROM public.parcelas
-                                          INNER JOIN public.compras on parcelas.compra_id = compras.id
-                                          where parcelas.boleto_pago = 'S' and compras.id = $parcela->compra_id;"
-        );
+        $qtdeParcelasPagas = DB::select(    "SELECT COUNT(parcelas.id)
+                                            FROM public.parcelas
+                                            INNER JOIN public.compras on parcelas.compra_id = compras.id
+                                            where parcelas.boleto_pago = 'S' and compras.id = $parcela->compra_id;"
+                                        );
         $qtdeParcelasPagas = $qtdeParcelasPagas['0'];
         $qtdeParcelasPagas =  $qtdeParcelasPagas->count;
 
@@ -356,7 +355,7 @@ class ApiController extends Controller
 
         $this->parcela->save();
 
-        return  response()->json($this->parcela);     
+        return  response()->json($this->parcela);
     }
 
     public function gerarNumBoleto()
@@ -371,5 +370,17 @@ class ApiController extends Controller
         }
 
         return $numBoleto;
+    }
+
+    public function GetComprasPagas($idPessoa, $idEmpresa)
+    {
+        $query = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, compras.compra_paga, compras.empresa_id, compras.pessoa_id
+                                FROM pessoas
+                                INNER JOIN compras ON pessoas.id = $idPessoa
+                                INNER JOIN empresas ON empresas.id = $idEmpresa
+                                WHERE compras.compra_paga = 'S';"
+                            );
+
+        return  response()->json($query);
     }
 }

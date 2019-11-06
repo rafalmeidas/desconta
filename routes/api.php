@@ -23,6 +23,7 @@ Route::group(['namespace' => 'Api'], function(){
     Route::get('get_cidade/{id}', 'ApiController@GetCidade');
     Route::get('get_cidadeEstado/{idPessoa}', 'ApiController@GetCidadeEstado');
     Route::get('get_cidades/{idEstado}', 'ApiController@GetCidades');
+    Route::get('get_compras_pagas/{idPessoa}/{idEmpresa}', 'ApiController@GetComprasPagas');
     Route::post('set_usuario/{email}/{uid}', 'ApiController@setUsuario');
     Route::patch('update_usuario/{id}/{email}/{uid}', 'ApiController@UpUsuario');
     Route::patch('gerar_boleto/{idParcela}', 'ApiController@GerarBoleto');
