@@ -376,9 +376,11 @@ class ApiController extends Controller
     {
         $query = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, compras.compra_paga, compras.empresa_id, compras.pessoa_id
                                 FROM pessoas
-                                INNER JOIN compras ON pessoas.id = $idPessoa
-                                INNER JOIN empresas ON empresas.id = $idEmpresa
-                                WHERE compras.compra_paga = 'S';"
+                                INNER JOIN compras ON pessoas.id = compras.pessoa_id
+                                INNER JOIN empresas ON compras.empresa_id = empresas.id
+                                WHERE compras.compra_paga = 'S'
+                                AND compras.pessoa_id = $idPessoa
+                                AND compras.empresa_id = $idEmpresa;"
                             );
 
         return  response()->json($query);
