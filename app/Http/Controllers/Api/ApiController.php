@@ -385,4 +385,6 @@ class ApiController extends Controller
 
         return  response()->json($query);
     }
+
+    //não sei se vai estar certo mais to fazendo um commit
 }
