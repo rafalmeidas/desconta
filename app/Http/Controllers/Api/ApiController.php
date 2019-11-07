@@ -374,17 +374,18 @@ class ApiController extends Controller
 
     public function GetComprasPagas($idPessoa, $idEmpresa)
     {
-        $query = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, compras.compra_paga, compras.empresa_id, compras.pessoa_id
+        $query = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, compras.compra_paga, compras.empresa_id, compras.pessoa_id, descontos.valor_desconto
                                 FROM pessoas
                                 INNER JOIN compras ON pessoas.id = compras.pessoa_id
                                 INNER JOIN empresas ON compras.empresa_id = empresas.id
+                                INNER JOIN descontos ON compras.id = descontos.compra_id
                                 WHERE compras.compra_paga = 'S'
                                 AND compras.pessoa_id = $idPessoa
-                                AND compras.empresa_id = $idEmpresa;"
+                                AND compras.empresa_id = $idEmpresa
+                                AND compras.id = descontos.compra_id;"
                             );
 
         return  response()->json($query);
     }
 
-    //não sei se vai estar certo mais to fazendo um commit
 }
