@@ -192,7 +192,7 @@
                 break;
             case '7':
                 document.getElementById('div_sit').innerHTML = 
-                '<label for="iddata">Dia</label>' +
+                '<label for="iddata">Data de vencimento</label>' +
                 '<input type="date" name="data" id="iddata" class="form-control" value="{{$data}}" />';
 
                 document.getElementById('div').innerHTML = '';
