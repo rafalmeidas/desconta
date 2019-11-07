@@ -43,7 +43,7 @@
                     </select>
                 </div>
 
-                <div class="form-group col-md-2">
+                <div class="form-group col-md-2" id="div_sit">
                     <label for="idsituacao">Situação</label><br>
                     <select name="situacao" class="form-control" id="idsituacao">
                         @foreach($situacoes as $id => $nome)
@@ -105,7 +105,16 @@
                 break;
 
             case '2':
-            document.getElementById('div').innerHTML = 
+                document.getElementById('div_sit').innerHTML = 
+                '<label for="idsituacao">Situação</label><br>' +
+                    '<select name="situacao" class="form-control" id="idsituacao">'+
+                        '@foreach($situacoes as $id => $nome)'+
+                        '<option value="{{$id}}" @if($id == 1) selected @endif' +
+                                '>{{$nome}}</option>' +
+                        '@endforeach' +
+                    '</select>';
+
+                document.getElementById('div').innerHTML = 
                 '<label for="iddata">Dia</label>' +
                 '<input type="date" name="data" id="iddata" class="form-control" value="{{$data}}" />';
 
@@ -113,7 +122,16 @@
                 break;
 
             case '3':
-            document.getElementById('div').innerHTML = 
+                document.getElementById('div_sit').innerHTML = 
+                '<label for="idsituacao">Situação</label><br>' +
+                    '<select name="situacao" class="form-control" id="idsituacao">'+
+                        '@foreach($situacoes as $id => $nome)'+
+                        '<option value="{{$id}}" @if($id == 1) selected @endif' +
+                                '>{{$nome}}</option>' +
+                        '@endforeach' +
+                    '</select>';
+
+                document.getElementById('div').innerHTML = 
                 '<label for="idmes">Mês</label>' +
                 '<input type="date" name="mes" id="idmes" class="form-control" value="{{$data}}" />';
 
@@ -121,7 +139,16 @@
                 break;
 
             case '4':
-            document.getElementById('div').innerHTML = 
+                document.getElementById('div_sit').innerHTML = 
+                '<label for="idsituacao">Situação</label><br>' +
+                    '<select name="situacao" class="form-control" id="idsituacao">'+
+                        '@foreach($situacoes as $id => $nome)'+
+                        '<option value="{{$id}}" @if($id == 1) selected @endif' +
+                                '>{{$nome}}</option>' +
+                        '@endforeach' +
+                    '</select>';
+
+                document.getElementById('div').innerHTML = 
                 '<label for="idano">Ano</label>' +
                 '<input type="date" name="ano" id="idano" class="form-control" value="{{$data}}" />';
 
@@ -129,7 +156,16 @@
                 break;
 
             case '5':
-            document.getElementById('div').innerHTML = 
+                document.getElementById('div_sit').innerHTML = 
+                '<label for="idsituacao">Situação</label><br>' +
+                    '<select name="situacao" class="form-control" id="idsituacao">'+
+                        '@foreach($situacoes as $id => $nome)'+
+                        '<option value="{{$id}}" @if($id == 1) selected @endif' +
+                                '>{{$nome}}</option>' +
+                        '@endforeach' +
+                    '</select>';
+
+                document.getElementById('div').innerHTML = 
                 '<label for="idcpf">CPF do Cliente</label>' +
                 '<input type="text" name="cpf" id="idcpf" placeholder="Digite o CPF" class="form-control" />';
 
@@ -137,13 +173,33 @@
                 break;
 
             case '6':
-            document.getElementById('div').innerHTML = 
+                document.getElementById('div_sit').innerHTML = 
+                '<label for="idsituacao">Situação</label><br>' +
+                    '<select name="situacao" class="form-control" id="idsituacao">'+
+                        '@foreach($situacoes as $id => $nome)'+
+                        '<option value="{{$id}}" @if($id == 1) selected @endif' +
+                                '>{{$nome}}</option>' +
+                        '@endforeach' +
+                    '</select>';
+
+                document.getElementById('div').innerHTML = 
                 '<label for="iddatainic">Data início</label>' +
                 '<input type="date" name="datainic" id="iddatainic" class="form-control" />';
 
                 document.getElementById('div1').innerHTML = 
                 '<label for="iddatafin">Data final</label>' +
                 '<input type="date" name="datafin" id="iddatafin" class="form-control" />';
+                break;
+            case '7':
+                document.getElementById('div_sit').innerHTML = 
+                '<label for="iddata">Dia</label>' +
+                '<input type="date" name="data" id="iddata" class="form-control" value="{{$data}}" />';
+
+                document.getElementById('div').innerHTML = '';
+                
+
+                document.getElementById('div1').innerHTML = '';
+
                 break;
         }
     }

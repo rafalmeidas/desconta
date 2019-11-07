@@ -21,6 +21,7 @@ class RelatorioFinanceiroController extends Controller
             4 => 'Ano',
             5 => 'CPF',
             6 => 'Intervalo de datas',
+            7 => 'Contas a receber'
         ];
 
         $situacoes = [
@@ -39,7 +40,7 @@ class RelatorioFinanceiroController extends Controller
         $filtro = isset($dataForm['filtro']) ? $dataForm['filtro'] : null;
 
         //Caso pertar F5 ou recarregue a pagina em um relatório já gerado em tela
-        if($filtro == null){
+        if ($filtro == null) {
             return redirect()->route('index.financeiro')->with(['error' => 'Selecione novamente um filtro para consulta e preencha os campos corretamente.']);
         }
 
@@ -86,6 +87,13 @@ class RelatorioFinanceiroController extends Controller
                 //redirecionar com erro
                 return redirect()->route('index.financeiro')->with(['error' => 'Insira as datas corretamente.']);
             }
+        } elseif ($filtro == 7) {
+            if (isset($dataForm['data'])) {
+                return $this->relatorioCompra($dataForm);
+            } else {
+                //redirecionar com erro
+                return redirect()->route('index.financeiro')->with(['error' => 'Insira a data correta.']);
+            }
         }
     }
 
@@ -110,39 +118,39 @@ class RelatorioFinanceiroController extends Controller
             case 1:
                 $titulo = 'Relatório Finaceiro (Todas)';
 
-                if($dados['situacao'] == '2'){
+                if ($dados['situacao'] == '2') {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('compra_paga', '=', 'S')
                                         ->get();
-                }else if($dados['situacao'] == '3'){
+                } elseif ($dados['situacao'] == '3') {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('compra_paga', '=', 'N')
                                         ->get();
-                }else{
+                } else {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)->get();
                 }
                 
                 $parcelas = null;
-                foreach($relatorio as $d){
+                foreach ($relatorio as $d) {
                     $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
                 }
 
-                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download);
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download);
                 break;
             case 2:
                 $titulo = 'Relatório Finaceiro (Por dia)';
 
-                if($dados['situacao'] == '2'){
+                if ($dados['situacao'] == '2') {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('compras.data_venda', '=', $dados['data'])
                                         ->where('compra_paga', '=', 'S')
                                         ->get();
-                }else if($dados['situacao'] == '3'){
+                } elseif ($dados['situacao'] == '3') {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('compras.data_venda', '=', $dados['data'])
                                         ->where('compra_paga', '=', 'N')
                                         ->get();
-                }else{
+                } else {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('compras.data_venda', '=', $dados['data'])
                                         ->get();
@@ -150,11 +158,11 @@ class RelatorioFinanceiroController extends Controller
 
                 //definindo a variavel de parcelas
                 $parcelas = null;
-                foreach($relatorio as $d){
+                foreach ($relatorio as $d) {
                     $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
                 }
 
-                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download, $dados['data']);
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download, $dados['data']);
                 break;
             case 3:
                 $titulo = 'Relatório Financeiro (Por Mês)';
@@ -166,17 +174,17 @@ class RelatorioFinanceiroController extends Controller
                 $start = $arrayData[0].'-'.$arrayData[1].'-01';
                 $end = $arrayData[0].'-'.$arrayData[1].'-'.$dias;
 
-                if($dados['situacao'] == '2'){
+                if ($dados['situacao'] == '2') {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->where('compra_paga', '=', 'S')
                                         ->get();
-                }else if($dados['situacao'] == '3'){
+                } elseif ($dados['situacao'] == '3') {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->where('compra_paga', '=', 'N')
                                         ->get();
-                }else{
+                } else {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->get();
@@ -184,11 +192,11 @@ class RelatorioFinanceiroController extends Controller
 
                 //definindo a variavel de parcelas
                 $parcelas = null;
-                foreach ($relatorio as $d){
+                foreach ($relatorio as $d) {
                     $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
                 }
                 
-                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download, $start, $end);
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download, $start, $end);
                 break;
             case 4:
                 $titulo = 'Relatório Financeiro (Por Ano)';
@@ -201,17 +209,17 @@ class RelatorioFinanceiroController extends Controller
                 $start = $arrayData[0].'-'.'01'.'-01';
                 $end = $arrayData[0].'-'.'12'.'-'.$dias;
 
-                if($dados['situacao'] == '2'){
+                if ($dados['situacao'] == '2') {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->where('compra_paga', '=', 'S')
                                         ->get();
-                }else if($dados['situacao'] == '3'){
+                } elseif ($dados['situacao'] == '3') {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->where('compra_paga', '=', 'N')
                                         ->get();
-                }else{
+                } else {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->get();
@@ -219,7 +227,7 @@ class RelatorioFinanceiroController extends Controller
                 
                 //definindo a variavel de parcelas
                 $parcelas = null;
-                foreach($relatorio as $d){
+                foreach ($relatorio as $d) {
                     $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
                 }
                 return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download, $start, $end);
@@ -232,24 +240,24 @@ class RelatorioFinanceiroController extends Controller
                 $pessoa = $pessoa->where('cpf', '=', $adicional)->first();
 
                 //dd($pessoa);
-                if($dados['situacao'] == '2'){
+                if ($dados['situacao'] == '2') {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('pessoa_id', '=', $pessoa->id)
                                         ->where('compra_paga', '=', 'S')
                                         ->get();
-                }else if($dados['situacao'] == '3'){
+                } elseif ($dados['situacao'] == '3') {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('pessoa_id', '=', $pessoa->id)
                                         ->where('compra_paga', '=', 'N')
                                         ->get();
-                }else{
+                } else {
                     $relatorio = $compra->where('compras.empresa_id', '=', auth()->user()->empresa_id)
                                         ->where('pessoa_id', '=', $pessoa->id)->get();
                 }
 
                 //definindo a variavel de parcelas
                 $parcelas = null;
-                foreach($relatorio as $d){
+                foreach ($relatorio as $d) {
                     $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
                 }
 
@@ -261,30 +269,47 @@ class RelatorioFinanceiroController extends Controller
                 $start = $adicional;
                 $end = $adicional1;
 
-                if($dados['situacao'] == '2'){
+                if ($dados['situacao'] == '2') {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->where('compra_paga', '=', 'S')
                                         ->get();
-                }else if($dados['situacao'] == '3'){
+                } elseif ($dados['situacao'] == '3') {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->where('compra_paga', '=', 'N')
                                         ->get();
-                }else{
+                } else {
                     $relatorio = $compra->where('empresa_id', '=', auth()->user()->empresa_id)
                                         ->whereBetween('data_venda', array($start, $end))
                                         ->get();
                 }
                 
                 $parcelas = null;
-                foreach($relatorio as $d){
+                foreach ($relatorio as $d) {
                     $parcelas[] = $parcela->where('compra_id', '=', $d->id)->get();
                 }
 
-                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, false, $download, $start, $end);
+                return $this->gerarPDF($nomeView, $relatorio, $parcelas, $titulo, true, $download, $start, $end);
                 break;
+            case 7:
+                $titulo = 'Relatório Contas a receber';
+                $nomeView = 'relatorio.financeiro.relatorio-compras-receber';
+                $relatorio = $parcela->join('compras', 'parcelas.compra_id', '=', 'compras.id')
+                                    ->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                    ->where('parcelas.boleto_pago', '=', 'N')
+                                    ->where('parcelas.data_vencimento', '=', $dados['data'])
+                                    ->get();
 
+                //Valor total em aberto
+                $valorTotal = $parcela->join('compras', 'parcelas.compra_id', '=', 'compras.id')
+                                    ->where('compras.empresa_id', '=', auth()->user()->empresa_id)
+                                    ->where('parcelas.boleto_pago', '=', 'N')
+                                    ->where('parcelas.data_vencimento', '=', $dados['data'])
+                                    ->sum('parcelas.valor_parcela');
+
+                return $this->gerarPDF($nomeView, $relatorio, $valorTotal, $titulo, true, $download, $dados['data']);
+                break;
         }
     }
 
@@ -294,27 +319,27 @@ class RelatorioFinanceiroController extends Controller
         $parcela = $dados1;
         $titulo = $titulo;
         $dataAtual = date('Y-m-d');
-        if($data == false){
+        if ($data == false) {
             $data = $dataAtual;
         }
 
-        if($data1 == false){
+        if ($data1 == false) {
             $data1 = $dataAtual;
         }
 
         if ($paisagem == true && $download == true) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela', 'titulo', 'data', 'data1'))
                 ->setPaper('a4', 'landscape')
                 ->download($titulo.".pdf");
         } elseif ($paisagem == true && $download == false) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela', 'titulo', 'data', 'data1'))
                 ->setPaper('a4', 'landscape')
                 ->stream($titulo.".pdf");
         } elseif ($download == true && $paisagem == false) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela', 'titulo', 'data', 'data1'))
                 ->download($titulo.".pdf");
         } elseif ($download == false && $paisagem == false) {
-            return \PDF::loadView($nomeView, compact('relatorio', 'parcela','titulo', 'data', 'data1'))
+            return \PDF::loadView($nomeView, compact('relatorio', 'parcela', 'titulo', 'data', 'data1'))
                 ->stream($titulo.".pdf");
         }
     }

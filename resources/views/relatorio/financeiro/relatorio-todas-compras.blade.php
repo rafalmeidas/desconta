@@ -19,8 +19,8 @@
                     <th>Cliente</th>
                     <th>Dt Venda</th>
                     <th>Qtde Parcelas</th>
-                    <th>Valor total</th>
                     <th>Paga</th>
+                    <th>Valor total</th>
                 </tr>
                 @forelse($relatorio as $dado)
 
@@ -28,8 +28,8 @@
                 <td style="background-color: #32b251;">{{$dado->pessoa->nome}} {{$dado->pessoa->sobrenome}}</td>
                     <td>{{date( 'd/m/Y' , strtotime($dado->data_venda))}}</td>
                     <td>{{$dado->qtde_parcelas}}</td>
-                    <td>{{number_format($dado->valor_total, 2, ',','.')}}</td>
                     <td>{{$dado->compra_paga}}</td>
+                    <td style="text-align: right">R$ {{number_format($dado->valor_total, 2, ',','.')}}</td>
                 </tr>
 
                 <tr>
@@ -49,7 +49,7 @@
                                                     <td>{{$p->nr_parcela}}</td>
                                                     <td>{{date( 'd/m/Y' , strtotime($p->data_vencimento))}}</td>
                                                     <td>{{$p->boleto_pago}}</td>
-                                                    <td>{{number_format($p->valor_parcela, 2, ',','.')}}</td>
+                                                    <td style="text-align: right">R$ {{number_format($p->valor_parcela, 2, ',','.')}}</td>
                                                 </tr>
                                             @endif
                                         @endforeach
