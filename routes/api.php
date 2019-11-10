@@ -30,5 +30,6 @@ Route::group(['namespace' => 'Api'], function(){
     Route::patch('pagar_parcela/{idParcela}', 'ApiController@PagarParcela');
     Route::patch('up_pessoa/{idPessoa}', 'ApiController@AtualizarPessoa');
     Route::patch('up_endereco/{idPessoa}', 'ApiController@AtualizarEndereco');
+    Route::get('get_empresas_filtro/{idFiltro}/{idValor}', 'ApiController@GetEmpresasFiltro');
 
 });

@@ -53,8 +53,10 @@ class ApiController extends Controller
         if ($pessoa != null) {
             $usuario = $this->user->where('pessoa_id', $pessoa->id)->first();
 
-            if ($usuario != null) return response('Erro ao tentar criar novo usuário com o CPF fornecido', 417)
+            if ($usuario != null) {
+                return response('Erro ao tentar criar novo usuário com o CPF fornecido', 417)
                 ->header('Content-Type', 'text/plain');
+            }
 
             return ApiController::retornoUsuario(new User, $pessoa);
         }
@@ -129,7 +131,6 @@ class ApiController extends Controller
                 "email_verified_at": "",';
         }
         if ($modelPessoa != null) {
-
             $cidade = $this->cidade->find($modelPessoa->cidade_id);
             $estado = null;
 
@@ -189,7 +190,6 @@ class ApiController extends Controller
 
     public function GetEmpresas($id)
     {
-
         $empresa = DB::select(
             "SELECT empresas.id, empresas.razao_social, empresas.nome_fantasia, empresas.cnpj, empresas.inscricao_est,
                                     empresas.porcentagem_desc, empresas.tel, empresas.rua, empresas.bairro, empresas.numero, empresas.cep, 
@@ -205,7 +205,6 @@ class ApiController extends Controller
 
     public function GetCompras($idUsuario, $idEmpresa)
     {
-
         $compra = DB::select(
             "SELECT compras.id, data_venda, qtde_parcelas, valor_total, nome_fantasia, compra_paga
                                FROM compras, empresas
@@ -220,7 +219,6 @@ class ApiController extends Controller
 
     public function GetParcelas($idCompra)
     {
-
         $parcela = DB::select(
             "SELECT id, nr_parcela, nr_boleto, valor_parcela, boleto_pago, data_vencimento
                                 FROM public.parcelas
@@ -239,11 +237,12 @@ class ApiController extends Controller
         $parcela->boleto_pago = $params['boleto_pago'];
         $parcela->save();
 
-        $qtdeParcelasPagas = DB::select(    "SELECT COUNT(parcelas.id)
+        $qtdeParcelasPagas = DB::select(
+            "SELECT COUNT(parcelas.id)
                                             FROM public.parcelas
                                             INNER JOIN public.compras on parcelas.compra_id = compras.id
                                             where parcelas.boleto_pago = 'S' and compras.id = $parcela->compra_id;"
-                                        );
+        );
         $qtdeParcelasPagas = $qtdeParcelasPagas['0'];
         $qtdeParcelasPagas =  $qtdeParcelasPagas->count;
 
@@ -288,8 +287,6 @@ class ApiController extends Controller
 
     public function GetCidadeEstado($idPessoa)
     {
-
-
         $query = DB::select(
             "SELECT cidades.nome, estados.sigla
                                    FROM estados
@@ -374,7 +371,8 @@ class ApiController extends Controller
 
     public function GetComprasPagas($idPessoa, $idEmpresa)
     {
-        $query = DB::select("SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, compras.compra_paga, compras.empresa_id, compras.pessoa_id, descontos.valor_desconto
+        $query = DB::select(
+            "SELECT compras.id, compras.data_venda, compras.qtde_parcelas, compras.valor_total, compras.compra_paga, compras.empresa_id, compras.pessoa_id, descontos.valor_desconto
                                 FROM pessoas
                                 INNER JOIN compras ON pessoas.id = compras.pessoa_id
                                 INNER JOIN empresas ON compras.empresa_id = empresas.id
@@ -383,9 +381,39 @@ class ApiController extends Controller
                                 AND compras.pessoa_id = $idPessoa
                                 AND compras.empresa_id = $idEmpresa
                                 AND compras.id = descontos.compra_id;"
-                            );
+        );
 
         return  response()->json($query);
     }
 
+    public function GetEmpresasFiltro($idFiltro, $idValor)
+    {
+        $select = "SELECT empresas.id, empresas.razao_social, empresas.nome_fantasia, empresas.cnpj, empresas.inscricao_est,
+                    empresas.porcentagem_desc, empresas.tel, empresas.rua, empresas.bairro, empresas.numero, empresas.cep, 
+                    empresas.complemento, empresas.cidade_id, empresas.status 
+                    FROM empresas ";
+        switch ($idFiltro) {
+            case 1:
+                $select .= "WHERE cidade_id = $idValor";
+                break;
+            case 2:
+               $select .= "WHERE razao_social ilike '%$idValor%'";
+                break;
+            case 3:
+                $select .= "WHERE nome_fantasia ilike '%$idValor%'";
+                break;
+            case 4:
+               $select .= "ORDER BY porcentagem_desc DESC, nome_fantasia";
+                break;
+            default:
+
+                break;
+        }
+
+        $select .= ";";
+
+        $this->empresa = DB::select($select);
+
+        return  response()->json($this->empresa);
+    }
 }
